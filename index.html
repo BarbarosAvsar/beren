@@ -1,139 +1,65 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description"
-    content="Robo Builder – Build your magical robot! Mix parts, dance, explore scenes, and play hide & seek." />
-  <title>🤖 Robo Builder – Magical Edition</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet" />
-
-  <!-- html2canvas for photo capture -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-  <!-- App Stylesheets -->
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/parts.css" />
-  <link rel="stylesheet" href="css/scenes.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Robot Builder in plain HTML, CSS, and JavaScript." />
+  <title>Robot Builder</title>
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="./css/animations.css" />
 </head>
-
 <body>
-  <!-- =================== APP ROOT =================== -->
-  <div id="app">
-
-    <!-- Flash overlay for camera -->
-    <div id="flash-overlay" class="flash-overlay" aria-hidden="true"></div>
-
-    <!-- Sparkle trail canvas layer -->
-    <div id="sparkle-layer" class="sparkle-layer" aria-hidden="true"></div>
-
-    <!-- Scene background -->
-    <div id="scene-bg" class="scene-bg" aria-label="Background scene"></div>
-
-    <!-- Robot stage area -->
-    <div id="robot-stage" class="robot-stage" aria-label="Robot assembly area">
-
-      <!-- Magic sparkle burst -->
-      <div id="magic-burst" class="magic-burst" aria-hidden="true"></div>
-
-      <!-- Robot assembly -->
-      <div id="robot-mover" class="robot-mover">
-        <div id="robot-dancer" class="robot-dancer">
-          <div id="robot-assembly" class="robot-assembly">
-
-            <!-- Emotion badge -->
-            <button id="emotion-badge" class="emotion-badge" aria-label="Change robot emotion"
-              title="Click to change emotion">
-              <span id="emotion-icon">😊</span>
-              <span class="emotion-star">⭐</span>
-            </button>
-
-            <!-- Head -->
-            <div id="robot-head-wrap" class="robot-part-wrap robot-head-wrap">
-              <div id="robot-head" class="robot-part robot-head" role="button" tabindex="0"
-                aria-label="Robot head – click to change" title="Click to change head"></div>
-            </div>
-
-            <!-- Body + Arms row -->
-            <div id="robot-body-row" class="robot-body-row">
-              <!-- Left arm -->
-              <div id="robot-arm-left" class="robot-arm robot-arm-left" role="button" tabindex="0"
-                aria-label="Left arm – click to change" title="Click to change arms"></div>
-              <!-- Body -->
-              <div id="robot-body-wrap" class="robot-part-wrap robot-body-wrap">
-                <div id="robot-body" class="robot-part robot-body" role="button" tabindex="0"
-                  aria-label="Robot body – click to change" title="Click to change body"></div>
-                <!-- Exhaust effect container -->
-                <div id="exhaust-container" class="exhaust-container" aria-hidden="true"></div>
-              </div>
-              <!-- Right arm -->
-              <div id="robot-arm-right" class="robot-arm robot-arm-right" role="button" tabindex="0"
-                aria-label="Right arm – click to change" title="Click to change arms"></div>
-            </div>
-
-            <!-- Legs -->
-            <div id="robot-legs-wrap" class="robot-part-wrap robot-legs-wrap">
-              <div id="robot-legs" class="robot-part robot-legs" role="button" tabindex="0"
-                aria-label="Robot legs – click to change" title="Click to change legs"></div>
-            </div>
-
-          </div><!-- /robot-assembly -->
-        </div><!-- /robot-dancer -->
-      </div><!-- /robot-mover -->
-
-    </div><!-- /robot-stage -->
-
-    <!-- UI overlay layer -->
-    <div id="ui-layer" class="ui-layer" aria-label="Controls">
-
-      <!-- Name plate -->
-      <button id="name-plate" class="name-plate" aria-label="Robot name – click to change" title="Click for new name">
-        <div class="name-plate-inner">
-          <span class="name-plate-led" aria-hidden="true"></span>
-          <h1 id="robot-name-text" class="robot-name-text">Loading…</h1>
-          <span class="name-plate-led" aria-hidden="true"></span>
-        </div>
+  <div id="app" class="app-shell">
+    <header class="app-header">
+      <button id="name-button" class="name-plate" type="button" aria-label="Change robot name" data-testid="name-button">
+        <span class="name-led" aria-hidden="true"></span>
+        <span id="name-text" class="name-text">Loading</span>
+        <span class="name-led" aria-hidden="true"></span>
       </button>
+      <button id="emotion-button" class="emotion-button" type="button" aria-label="Change robot emotion" data-testid="emotion-button">
+        <span id="emotion-text" class="emotion-text">:)</span>
+      </button>
+    </header>
 
-      <!-- Hide & Seek HUD -->
-      <div id="hide-seek-hud" class="hide-seek-hud hidden" role="status" aria-live="polite">
-        <span id="hide-seek-timer" class="hide-seek-timer">30</span>
-        <span class="hide-seek-label">Find the robot!</span>
-        <span id="hide-seek-score" class="hide-seek-score">⭐ 0</span>
-      </div>
+    <main class="app-main">
+      <section id="stage-region" class="stage-region" aria-label="Robot stage" data-testid="stage-region">
+        <div id="scene-layer" class="scene-layer" aria-hidden="true"></div>
+        <div id="stage-overlay" class="stage-overlay" aria-hidden="true"></div>
 
-      <!-- Dashboard -->
-      <div id="dashboard" class="dashboard" role="toolbar" aria-label="Robot controls">
-        <!-- Buttons injected by Dashboard.js -->
-      </div>
+        <div id="robot-mover" class="robot-mover">
+          <div id="robot-dancer" class="robot-dancer">
+            <div id="robot-assembly" class="robot-assembly" data-testid="robot-assembly">
+              <button id="part-head" class="part-button part-head" type="button" aria-label="Cycle robot head" data-part="head" data-testid="part-head"></button>
 
-    </div><!-- /ui-layer -->
+              <div class="part-row part-middle-row">
+                <button id="part-arm-left" class="part-button part-arm" type="button" aria-label="Cycle robot arms" data-part="arms" data-side="left" data-testid="part-arm-left"></button>
+                <button id="part-body" class="part-button part-body" type="button" aria-label="Cycle robot body" data-part="body" data-testid="part-body">
+                  <div id="exhaust-container" class="exhaust-container" aria-hidden="true"></div>
+                </button>
+                <button id="part-arm-right" class="part-button part-arm" type="button" aria-label="Cycle robot arms" data-part="arms" data-side="right" data-testid="part-arm-right"></button>
+              </div>
 
-    <!-- Toast notification -->
-    <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
-
-    <!-- Gallery Modal -->
-    <div id="gallery-modal" class="gallery-modal hidden" role="dialog" aria-modal="true" aria-label="My Magic Book">
-      <div class="gallery-header">
-        <div class="gallery-title-row">
-          <span aria-hidden="true">✨</span>
-          <h2 class="gallery-title">My Magic Book</h2>
-          <span aria-hidden="true">✨</span>
+              <button id="part-legs" class="part-button part-legs" type="button" aria-label="Cycle robot legs" data-part="legs" data-testid="part-legs"></button>
+            </div>
+          </div>
         </div>
-        <button id="gallery-close" class="gallery-close-btn" aria-label="Close gallery">✕</button>
-      </div>
-      <div id="gallery-grid" class="gallery-grid"></div>
-    </div>
+      </section>
 
-  </div><!-- /app -->
+      <aside id="hide-seek-hud" class="hide-seek-hud is-hidden" aria-live="polite" data-testid="hide-seek-hud">
+        <span class="hud-label">Hide and Seek</span>
+        <span class="hud-stat" id="hide-seek-timer" data-testid="hide-seek-timer">30</span>
+        <span class="hud-stat" id="hide-seek-score" data-testid="hide-seek-score">0</span>
+      </aside>
 
-  <!-- =================== MODULES =================== -->
-  <script type="module" src="js/App.js"></script>
+      <nav id="controls" class="controls" aria-label="Robot controls" data-testid="controls"></nav>
+    </main>
+
+    <div id="toast" class="toast is-hidden" role="status" aria-live="polite" data-testid="toast"></div>
+    <p id="status-live" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
 </body>
-
 </html>

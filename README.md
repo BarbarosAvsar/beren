@@ -1,16 +1,31 @@
-# React + Vite
+﻿# Robot Builder (Vanilla OOP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully client-side robot builder app implemented with plain HTML, CSS, and JavaScript.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Object-oriented architecture with small focused classes.
+- Scene switching, palette switching, size presets, randomize, movement, dance mode.
+- Engine bodies with smoke/fire exhaust effects.
+- Hide-and-seek mini game with timer and score.
+- Local SVG icons only (no external font/icon/CDN APIs).
+- Web Audio based SFX/music and speech synthesis announcements.
 
-## React Compiler
+## Scripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `npm run dev` - start Vite dev server
+- `npm run build` - production build
+- `npm run preview` - preview production build
+- `npm run lint` - ESLint
+- `npm run test` - unit tests (Vitest)
+- `npm run test:e2e` - end-to-end smoke tests (Playwright)
+- `npm run check` - lint + unit tests + build
 
-## Expanding the ESLint configuration
+## Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `index.html` - semantic app shell
+- `css/` - base/layout/components/animations
+- `js/` - core, domain, services, ui, controllers
+- `assets/icons.svg` - local icon sprite
+- `tests/unit/` - unit tests
+- `tests/e2e/` - Playwright smoke tests

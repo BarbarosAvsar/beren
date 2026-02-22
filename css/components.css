@@ -1,0 +1,440 @@
+﻿.name-plate {
+  border: 0;
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  min-width: min(90vw, 460px);
+  background: linear-gradient(180deg, #22345e, #1a2747);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.name-plate:focus-visible,
+.emotion-button:focus-visible,
+.control-button:focus-visible,
+.part-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.name-led {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  box-shadow: 0 0 14px rgba(125, 211, 252, 0.8);
+}
+
+.name-text {
+  font-size: clamp(1.1rem, 2vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.emotion-button {
+  border: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.emotion-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.control-button {
+  display: grid;
+  grid-template-rows: 26px auto;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  min-height: 84px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: transform var(--speed-fast), box-shadow var(--speed-fast), filter var(--speed-fast);
+}
+
+.control-button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.05);
+}
+
+.control-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.control-button[data-variant="scene"] {
+  background: #2f6fec;
+}
+
+.control-button[data-variant="color"] {
+  background: #1f9d74;
+}
+
+.control-button[data-variant="size"] {
+  background: #d946ef;
+}
+
+.control-button[data-variant="mix"] {
+  background: #ea580c;
+}
+
+.control-button[data-variant="move"] {
+  background: #0ea5e9;
+}
+
+.control-button[data-variant="dance"] {
+  background: #8b5cf6;
+}
+
+.control-button[data-variant="hideSeek"] {
+  background: #0f766e;
+}
+
+.control-button.is-active[data-variant="move"] {
+  background: #dc2626;
+}
+
+.control-button.is-active[data-variant="dance"] {
+  background: #f43f5e;
+}
+
+.control-button.is-active[data-variant="hideSeek"] {
+  background: #f59e0b;
+  color: #1f2937;
+}
+
+.control-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.control-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.hide-seek-hud {
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-soft);
+}
+
+.hud-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.hud-stat {
+  min-width: 46px;
+  text-align: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 10px;
+  font-weight: 700;
+}
+
+.hud-stat.is-warning {
+  color: #fca5a5;
+}
+
+.toast {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-soft);
+}
+
+.part-button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  color: #ffffff;
+}
+
+.part-head {
+  width: 110px;
+  height: 90px;
+}
+
+.part-body {
+  width: 130px;
+  height: 122px;
+  position: relative;
+}
+
+.part-arm {
+  width: 64px;
+  height: 120px;
+}
+
+.part-legs {
+  width: 130px;
+  height: 110px;
+}
+
+.robot-piece {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(0, 0, 0, 0.35);
+  background: var(--piece-color, #64748b);
+}
+
+.robot-piece::before,
+.robot-piece::after {
+  content: "";
+  position: absolute;
+}
+
+.robot-head-shape {
+  border-radius: 16px;
+}
+
+.robot-head-shape::before {
+  width: 20px;
+  height: 20px;
+  left: 24px;
+  top: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 42px 0 0 #ffffff;
+}
+
+.robot-head-shape::after {
+  width: 44px;
+  height: 6px;
+  left: 31px;
+  bottom: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.robot-body-shape {
+  border-radius: 18px;
+}
+
+.robot-body-shape::before {
+  width: 30px;
+  height: 30px;
+  left: 48px;
+  top: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.robot-body-shape::after {
+  width: 84px;
+  height: 8px;
+  left: 22px;
+  top: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.robot-body-engine {
+  border-color: rgba(248, 113, 113, 0.65);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.4), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.robot-body-engine::before {
+  background: rgba(254, 202, 202, 0.95);
+}
+
+.robot-body-engine::after {
+  width: 14px;
+  height: 14px;
+  right: 10px;
+  top: 10px;
+  border-radius: 50%;
+  background: #fca5a5;
+  box-shadow: 0 0 10px rgba(252, 165, 165, 0.95);
+}
+
+.robot-arm-shape {
+  border-radius: 999px;
+}
+
+.robot-arm-shape::before {
+  width: 20px;
+  height: 38px;
+  left: 22px;
+  top: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.robot-arm-shape::after {
+  width: 34px;
+  height: 18px;
+  left: 15px;
+  bottom: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.robot-arm-mirror {
+  transform: scaleX(-1);
+}
+
+.robot-legs-shape {
+  border-radius: 0 0 16px 16px;
+}
+
+.robot-legs-shape::before {
+  width: 28px;
+  height: 82px;
+  left: 22px;
+  top: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 58px 0 0 rgba(255, 255, 255, 0.82);
+}
+
+.robot-legs-shape::after {
+  width: 92px;
+  height: 14px;
+  left: 19px;
+  bottom: 8px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.robot-hidden {
+  opacity: 0.1;
+  transform: scale(0.35);
+}
+
+.exhaust-container {
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  width: 64px;
+  height: 54px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.exhaust-particle {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.exhaust-particle-smoke {
+  background: rgba(203, 213, 225, 0.85);
+}
+
+.exhaust-particle-fire {
+  background: rgba(251, 146, 60, 0.95);
+}
+
+.scene-layer {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.04), transparent 70%);
+}
+
+.scene-layer::before,
+.scene-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene-theme-factory {
+  background: linear-gradient(180deg, #111827, #334155);
+}
+
+.scene-theme-space {
+  background: radial-gradient(circle at top, #312e81 0%, #0b1020 72%);
+}
+
+.scene-theme-moon {
+  background: linear-gradient(180deg, #111827, #1f2937);
+}
+
+.scene-theme-jungle {
+  background: linear-gradient(180deg, #14532d, #064e3b);
+}
+
+.scene-theme-mars {
+  background: linear-gradient(180deg, #7f1d1d, #451a03);
+}
+
+.scene-theme-underwater {
+  background: linear-gradient(180deg, #0ea5e9, #1d4ed8);
+}
+
+.scene-theme-candy {
+  background: linear-gradient(180deg, #fbcfe8, #f9a8d4);
+}
+
+.scene-theme-volcano {
+  background: linear-gradient(180deg, #450a0a, #7f1d1d);
+}
+
+.scene-theme-arctic {
+  background: linear-gradient(180deg, #dbeafe, #bfdbfe);
+}
+
+.scene-theme-sunset {
+  background: linear-gradient(180deg, #f97316, #be123c, #312e81);
+}
+
+.scene-theme-haunted {
+  background: linear-gradient(180deg, #111827, #000000);
+}
+
+.scene-theme-disco {
+  background: linear-gradient(180deg, #111827, #1e1b4b);
+}
+
+.scene-accent {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.35;
+  filter: blur(0.2px);
+}
+
+.scene-accent.square {
+  border-radius: 6px;
+}
+
+.scene-accent.line {
+  border-radius: 999px;
+}
+
+.scene-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 38px 38px;
+  opacity: 0.2;
+}
