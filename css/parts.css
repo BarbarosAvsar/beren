@@ -1,0 +1,1725 @@
+/* ================================================================
+   ROBOT PARTS – Heads
+   ================================================================ */
+.rh {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.rh-antenna {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.rh-antenna-stem {
+    width: 4px;
+    height: 16px;
+    background: #9CA3AF
+}
+
+.rh-antenna-tip {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #EF4444
+}
+
+.rh-blink-red {
+    animation: pulse 1s ease-in-out infinite
+}
+
+.rh-eyes {
+    display: flex;
+    gap: 16px;
+    position: absolute;
+    top: 30%
+}
+
+.rh-eye {
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    animation: blink 3s infinite
+}
+
+.rh-blink-delay {
+    animation-delay: .5s !important
+}
+
+.rh-mouth {
+    position: absolute;
+    bottom: 12px;
+    width: 20px;
+    height: 3px;
+    background: rgba(255, 255, 255, .5)
+}
+
+.rh-mouth-wave {
+    animation: wave-mouth 2s ease-in-out infinite
+}
+
+@keyframes wave-mouth {
+
+    0%,
+    100% {
+        width: 20px
+    }
+
+    50% {
+        width: 30px
+    }
+}
+
+.rh-visor {
+    position: absolute;
+    width: 60%;
+    height: 32px;
+    border-radius: 20px;
+    top: 35%
+}
+
+.rh-visor-blue {
+    background: rgba(56, 189, 248, .5)
+}
+
+.rh-visor-orange {
+    background: rgba(249, 115, 22, .3)
+}
+
+.rh-glow-cyan {
+    box-shadow: 0 0 15px #22d3ee
+}
+
+.rh-glow-orange {
+    box-shadow: 0 0 15px #f97316
+}
+
+.rh-glow-red {
+    box-shadow: 0 0 10px #ef4444
+}
+
+.rh-glow-yellow {
+    box-shadow: 0 0 10px #fbbf24
+}
+
+.rh-screen {
+    position: absolute;
+    inset: 8px;
+    background: #111827;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.rh-waveform {
+    width: 80%;
+    height: 60%;
+    background: repeating-linear-gradient(90deg, transparent, transparent 4px, #3b82f6 4px, #3b82f6 5px);
+    animation: scan 2s linear infinite
+}
+
+@keyframes scan {
+    to {
+        background-position: 20px 0
+    }
+}
+
+.rh-cyclops-eye {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: 4px solid #065f46
+}
+
+.rh-cyclops-pupil {
+    width: 12px;
+    height: 12px;
+    background: #1e293b;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.rh-pupil-slide {
+    animation: pupil-slide 3s ease-in-out infinite
+}
+
+@keyframes pupil-slide {
+
+    0%,
+    100% {
+        left: 30%
+    }
+
+    50% {
+        left: 70%
+    }
+}
+
+.rh-antenna-tiny {
+    position: absolute;
+    top: -12px;
+    width: 6px;
+    height: 12px;
+    background: #22c55e
+}
+
+.rh-wiggle {
+    animation: wiggle 1s ease-in-out infinite
+}
+
+@keyframes wiggle {
+
+    0%,
+    100% {
+        transform: rotate(-10deg)
+    }
+
+    50% {
+        transform: rotate(10deg)
+    }
+}
+
+.rh-cat-ear {
+    position: absolute;
+    top: -12px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 24px solid #ec4899
+}
+
+.rh-cat-ear-left {
+    left: 12px
+}
+
+.rh-cat-ear-right {
+    right: 12px
+}
+
+.rh-eye-cat {
+    width: 10px;
+    height: 16px;
+    border-radius: 50%
+}
+
+.rh-nose-cat {
+    position: absolute;
+    bottom: 14px;
+    width: 8px;
+    height: 6px;
+    background: #f472b6;
+    border-radius: 50%
+}
+
+.rh-whisker {
+    position: absolute;
+    bottom: 18px;
+    width: 24px;
+    height: 2px;
+    background: rgba(255, 255, 255, .5)
+}
+
+.rh-whisker-left {
+    left: -8px
+}
+
+.rh-whisker-right {
+    right: -8px
+}
+
+.rh-whisker-wave {
+    animation: whisker 2s ease-in-out infinite
+}
+
+.rh-whisker-wave-r {
+    animation: whisker 2s ease-in-out infinite reverse
+}
+
+@keyframes whisker {
+
+    0%,
+    100% {
+        transform: rotate(-3deg)
+    }
+
+    50% {
+        transform: rotate(3deg)
+    }
+}
+
+.rh-eye-red {
+    background: #ef4444
+}
+
+.rh-teeth {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    gap: 3px
+}
+
+.rh-teeth::before,
+.rh-teeth::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 10px;
+    background: #fff;
+    border-radius: 0 0 4px 4px
+}
+
+.rh-helmet-seal {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #9ca3af;
+    bottom: 30%
+}
+
+.rh-helmet-seal-left {
+    left: 4px
+}
+
+.rh-helmet-seal-right {
+    right: 4px
+}
+
+.rh-toast-slot {
+    position: absolute;
+    top: 4px;
+    width: 60%;
+    height: 8px;
+    background: #1f2937;
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    gap: 4px;
+    justify-content: center
+}
+
+.rh-toast {
+    width: 14px;
+    height: 20px;
+    background: #fbbf24;
+    border-radius: 2px;
+    position: relative
+}
+
+.rh-toast-pop {
+    animation: toast-pop 3s ease-in-out infinite
+}
+
+.rh-pop-delay {
+    animation-delay: .3s
+}
+
+@keyframes toast-pop {
+
+    0%,
+    80%,
+    100% {
+        top: 8px
+    }
+
+    90% {
+        top: -4px
+    }
+}
+
+.rh-pumpkin-stem {
+    position: absolute;
+    top: -10px;
+    width: 8px;
+    height: 12px;
+    background: #65a30d;
+    border-radius: 2px
+}
+
+.rh-pumpkin-eyes {
+    display: flex;
+    gap: 20px;
+    position: absolute;
+    top: 25%
+}
+
+.rh-pumpkin-eye {
+    width: 14px;
+    height: 14px;
+    background: #fbbf24;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%)
+}
+
+.rh-pumpkin-mouth {
+    position: absolute;
+    bottom: 15px;
+    width: 30px;
+    height: 12px;
+    background: #fbbf24;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%)
+}
+
+.rh-fin {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    background: #0d9488;
+    border-radius: 50%;
+    top: 10px
+}
+
+.rh-fin-left {
+    left: -8px
+}
+
+.rh-fin-right {
+    right: -8px
+}
+
+.rh-fin-wave {
+    animation: fin-wave 1.5s ease-in-out infinite
+}
+
+.rh-fin-wave-r {
+    animation: fin-wave 1.5s ease-in-out infinite reverse
+}
+
+@keyframes fin-wave {
+
+    0%,
+    100% {
+        transform: rotate(-15deg)
+    }
+
+    50% {
+        transform: rotate(15deg)
+    }
+}
+
+.rh-eye-fish {
+    width: 16px;
+    height: 16px
+}
+
+.rh-fish-blink {
+    animation: blink 4s infinite
+}
+
+.rh-fish-mouth {
+    position: absolute;
+    bottom: 12px;
+    width: 10px;
+    height: 6px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 50%
+}
+
+.rh-crown-points {
+    position: absolute;
+    top: -16px;
+    display: flex;
+    gap: 8px
+}
+
+.rh-crown-point {
+    width: 8px;
+    background: #eab308
+}
+
+.rh-crown-short {
+    height: 12px;
+    border-radius: 2px 2px 0 0
+}
+
+.rh-crown-tall {
+    height: 18px;
+    border-radius: 2px 2px 0 0
+}
+
+.rh-crown-sway {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.rh-jewel {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #ef4444;
+    border-radius: 50%;
+    top: 30%
+}
+
+.rh-jewel-pulse {
+    animation: pulse 1.5s ease-in-out infinite
+}
+
+.rh-dots {
+    display: flex;
+    gap: 12px;
+    position: absolute;
+    bottom: 20px
+}
+
+.rh-dot {
+    width: 6px;
+    height: 6px;
+    background: rgba(0, 0, 0, .3);
+    border-radius: 50%
+}
+
+.rh-antenna-alien {
+    position: absolute;
+    top: -20px;
+    width: 4px;
+    height: 20px;
+    background: #4ade80
+}
+
+.rh-alien-left {
+    left: 20px
+}
+
+.rh-alien-right {
+    right: 20px
+}
+
+.rh-alien-wave-l {
+    animation: wiggle 1.5s ease-in-out infinite;
+    transform-origin: bottom
+}
+
+.rh-alien-wave-r {
+    animation: wiggle 1.5s ease-in-out infinite reverse;
+    transform-origin: bottom
+}
+
+.rh-eye-alien {
+    width: 18px;
+    height: 24px;
+    background: #000;
+    border-radius: 50%;
+    border: 3px solid #22c55e
+}
+
+.rh-alien-blink {
+    animation: blink 3.5s infinite
+}
+
+/* ================================================================
+   ROBOT PARTS – Bodies
+   ================================================================ */
+.rb {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+
+.rb-panel-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    background: rgba(255, 255, 255, .15)
+}
+
+.rb-panel-top {
+    top: 16px;
+    width: 70%
+}
+
+.rb-panel-bottom {
+    bottom: 16px;
+    width: 50%
+}
+
+.rb-core {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%
+}
+
+.rb-core-cyan {
+    background: #06b6d4;
+    box-shadow: 0 0 15px #06b6d4
+}
+
+.rb-core-amber {
+    background: #f59e0b;
+    box-shadow: 0 0 10px #f59e0b
+}
+
+.rb-core-purple {
+    background: #a855f7;
+    box-shadow: 0 0 15px #a855f7
+}
+
+.rb-core-red {
+    background: #ef4444;
+    box-shadow: 0 0 20px #ef4444
+}
+
+.rb-core-fire {
+    background: #f97316;
+    box-shadow: 0 0 25px #f97316, 0 0 50px #ef4444
+}
+
+.rb-core-pulse {
+    animation: pulse 1.5s ease-in-out infinite
+}
+
+.rb-core-spin {
+    animation: spin 4s linear infinite
+}
+
+.rb-led {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%
+}
+
+.rb-led-green {
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+    animation: pulse 2s infinite
+}
+
+.rb-ring {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 4px;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 2px
+}
+
+.rb-rivet {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #78716c;
+    border-radius: 50%;
+    border: 2px solid #57534e
+}
+
+.rb-fire-window {
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    background: #450a0a;
+    border: 3px solid #991b1b;
+    border-radius: 6px;
+    overflow: hidden
+}
+
+.rb-flame {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #f97316, #ef4444, transparent)
+}
+
+.rb-flame-anim {
+    animation: flame-flicker .3s ease-in-out infinite alternate
+}
+
+@keyframes flame-flicker {
+    0% {
+        opacity: .7;
+        transform: scaleY(.8)
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1.1)
+    }
+}
+
+.rb-star {
+    font-size: 28px
+}
+
+.rb-star-spin {
+    animation: spin 6s linear infinite
+}
+
+.rb-stripe {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 4px;
+    background: rgba(255, 255, 255, .3);
+    width: 80%
+}
+
+.rb-stripe-top {
+    top: 25%
+}
+
+.rb-stripe-bottom {
+    bottom: 25%
+}
+
+.rb-orbit {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: 2px dashed rgba(255, 255, 255, .2);
+    border-radius: 50%
+}
+
+.rb-orbit-spin {
+    animation: spin 8s linear infinite
+}
+
+.rb-speaker-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px
+}
+
+.rb-speaker {
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(#1e293b, #0f172a);
+    border-radius: 50%;
+    border: 3px solid #f97316
+}
+
+.rb-speaker-pulse {
+    animation: pulse .5s ease-in-out infinite
+}
+
+.rb-eq {
+    display: flex;
+    gap: 3px;
+    height: 20px;
+    align-items: flex-end
+}
+
+.rb-eq-bar {
+    width: 4px;
+    background: #22c55e;
+    border-radius: 2px;
+    animation: eq-bar .6s ease-in-out infinite alternate
+}
+
+@keyframes eq-bar {
+    0% {
+        height: 4px
+    }
+
+    100% {
+        height: 20px
+    }
+}
+
+.rb-vault {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #6b7280;
+    border-radius: 50%;
+    position: relative
+}
+
+.rb-vault-spin {
+    width: 12px;
+    height: 12px;
+    background: #9ca3af;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 3s linear infinite
+}
+
+.rb-window {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    border: 3px solid #e2e8f0
+}
+
+.rb-window-sky {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, .3)
+}
+
+.rb-heart {
+    font-size: 36px
+}
+
+.rb-heart-beat {
+    animation: heartbeat 1s ease-in-out infinite
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(1.2)
+    }
+}
+
+.rb-ribbon {
+    position: absolute;
+    background: #fff
+}
+
+.rb-ribbon-h {
+    width: 100%;
+    height: 8px;
+    top: 50%;
+    transform: translateY(-50%)
+}
+
+.rb-ribbon-v {
+    height: 100%;
+    width: 8px;
+    left: 50%;
+    transform: translateX(-50%)
+}
+
+.rb-bow {
+    position: absolute;
+    top: -16px;
+    font-size: 24px
+}
+
+.rb-bow-wobble {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.rb-pipe {
+    position: absolute;
+    width: 12px;
+    height: 30px;
+    background: #374151;
+    border: 2px solid #4b5563;
+    border-radius: 4px;
+    top: -20px
+}
+
+.rb-pipe-left {
+    left: 16px
+}
+
+.rb-pipe-right {
+    right: 16px
+}
+
+.rb-warning {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+    background: #fbbf24;
+    border-radius: 50%
+}
+
+.rb-warning-blink {
+    animation: pulse .8s infinite
+}
+
+.rb-rivets-row {
+    position: absolute;
+    bottom: 12px;
+    display: flex;
+    gap: 6px
+}
+
+.rb-brew-top {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 8px;
+    background: rgba(168, 85, 247, .5);
+    animation: brew 2s ease-in-out infinite
+}
+
+@keyframes brew {
+
+    0%,
+    100% {
+        opacity: .3
+    }
+
+    50% {
+        opacity: .8
+    }
+}
+
+.rb-bubble {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: rgba(168, 85, 247, .4);
+    border-radius: 50%;
+    animation: bubble-rise 2s ease-in-out infinite
+}
+
+.rb-bubble-1 {
+    left: 30%;
+    animation-delay: 0s
+}
+
+.rb-bubble-2 {
+    left: 50%;
+    animation-delay: .5s
+}
+
+.rb-bubble-3 {
+    left: 70%;
+    animation-delay: 1s
+}
+
+@keyframes bubble-rise {
+    0% {
+        bottom: 20%;
+        opacity: .8
+    }
+
+    100% {
+        bottom: 80%;
+        opacity: 0
+    }
+}
+
+.rb-flask {
+    font-size: 24px;
+    position: absolute;
+    bottom: 8px;
+    right: 8px
+}
+
+.rb-flask-rock {
+    animation: wiggle 1.5s ease-in-out infinite
+}
+
+/* Engine bodies */
+.rb-turbo-grill {
+    position: absolute;
+    top: 10px;
+    width: 60%;
+    height: 10px;
+    display: flex;
+    gap: 4px;
+    justify-content: center
+}
+
+.rb-turbo-grill::before {
+    content: '';
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, #e94560 0, #e94560 4px, transparent 4px, transparent 8px)
+}
+
+.rb-turbo-label,
+.rb-jet-label {
+    position: absolute;
+    bottom: 8px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, .6)
+}
+
+.rb-exhaust-port {
+    position: absolute;
+    bottom: -8px;
+    width: 14px;
+    height: 10px;
+    background: #374151;
+    border-radius: 0 0 4px 4px;
+    border: 2px solid #e94560
+}
+
+.rb-exhaust-port-left {
+    left: 20px
+}
+
+.rb-exhaust-port-right {
+    right: 20px
+}
+
+.rb-jet-intake {
+    position: absolute;
+    top: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 4px solid #f59e0b;
+    background: radial-gradient(#1a1a2e, #000);
+    animation: spin 3s linear infinite
+}
+
+.rb-jet-nozzle-bottom {
+    position: absolute;
+    bottom: -6px;
+    width: 40px;
+    height: 8px;
+    background: linear-gradient(#f59e0b, #ef4444);
+    border-radius: 0 0 8px 8px;
+    left: 50%;
+    transform: translateX(-50%)
+}
+
+/* ================================================================
+   ROBOT PARTS – Legs
+   ================================================================ */
+.rl {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 50px
+}
+
+.rl-biped {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-biped-left {
+    margin-right: 12px
+}
+
+.rl-biped-right {
+    margin-left: 12px
+}
+
+.rl-shin {
+    width: 14px;
+    height: 32px;
+    border-radius: 4px
+}
+
+.rl-foot {
+    width: 24px;
+    height: 10px;
+    border-radius: 4px 4px 8px 8px;
+    margin-top: 2px
+}
+
+.rl-walk-l {
+    animation: walk-l .8s ease-in-out infinite
+}
+
+.rl-walk-r {
+    animation: walk-r .8s ease-in-out infinite
+}
+
+@keyframes walk-l {
+
+    0%,
+    100% {
+        transform: rotate(-8deg)
+    }
+
+    50% {
+        transform: rotate(8deg)
+    }
+}
+
+@keyframes walk-r {
+
+    0%,
+    100% {
+        transform: rotate(8deg)
+    }
+
+    50% {
+        transform: rotate(-8deg)
+    }
+}
+
+.rl-boot {
+    width: 28px;
+    height: 36px;
+    border-radius: 8px 8px 12px 12px
+}
+
+.rl-boot-sway-l {
+    animation: walk-l 1s ease-in-out infinite;
+    margin-right: 8px
+}
+
+.rl-boot-sway-r {
+    animation: walk-r 1s ease-in-out infinite;
+    margin-left: 8px
+}
+
+.rl-wheels-row {
+    gap: 16px;
+    align-items: center
+}
+
+.rl-wheel {
+    width: 28px;
+    height: 28px;
+    background: #374151;
+    border-radius: 50%;
+    border: 4px solid #6b7280;
+    position: relative
+}
+
+.rl-wheel-spin {
+    animation: spin 1s linear infinite
+}
+
+.rl-wheel-spoke {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 3px;
+    background: #9ca3af;
+    transform: translate(-50%, -50%)
+}
+
+.rl-axle {
+    width: 20px;
+    height: 4px;
+    background: #6b7280
+}
+
+.rl-tread {
+    display: flex;
+    gap: 4px;
+    background: #374151;
+    padding: 4px 8px;
+    border-radius: 8px;
+    overflow: hidden
+}
+
+.rl-tread-scroll {
+    animation: tread-scroll 2s linear infinite
+}
+
+@keyframes tread-scroll {
+    to {
+        transform: translateX(-8px)
+    }
+}
+
+.rl-tread-wheel {
+    width: 12px;
+    height: 12px;
+    background: #4b5563;
+    border-radius: 50%;
+    border: 2px solid #6b7280
+}
+
+.rl-hover {
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-hover-body {
+    width: 60px;
+    height: 12px;
+    background: #6b7280;
+    border-radius: 6px
+}
+
+.rl-hover-float {
+    animation: floatY 2s ease-in-out infinite
+}
+
+.rl-hover-glow {
+    width: 40px;
+    height: 6px;
+    background: #3b82f6;
+    border-radius: 3px;
+    margin-top: 4px
+}
+
+.rl-hover-pulse {
+    animation: pulse 1s ease-in-out infinite;
+    box-shadow: 0 0 12px #3b82f6
+}
+
+.rl-springs-row {
+    gap: 20px
+}
+
+.rl-spring {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.rl-spring-bounce-l {
+    animation: spring-bounce 1s ease-in-out infinite
+}
+
+.rl-spring-bounce-r {
+    animation: spring-bounce 1s ease-in-out infinite .5s
+}
+
+@keyframes spring-bounce {
+
+    0%,
+    100% {
+        transform: scaleY(1)
+    }
+
+    50% {
+        transform: scaleY(.7)
+    }
+}
+
+.rl-chicken {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-chicken-l {
+    margin-right: 8px;
+    animation: walk-l .6s ease-in-out infinite
+}
+
+.rl-chicken-r {
+    margin-left: 8px;
+    animation: walk-r .6s ease-in-out infinite
+}
+
+.rl-cleg-upper {
+    width: 10px;
+    height: 20px;
+    border-radius: 4px
+}
+
+.rl-cleg-lower {
+    width: 8px;
+    height: 16px;
+    border-radius: 4px;
+    margin-top: 2px
+}
+
+.rl-cleg-toes {
+    display: flex;
+    gap: 3px;
+    margin-top: 2px
+}
+
+.rl-cleg-toes::before {
+    content: '';
+    width: 6px;
+    height: 4px;
+    background: #eab308;
+    border-radius: 2px
+}
+
+.rl-cleg-toes::after {
+    content: '';
+    width: 6px;
+    height: 4px;
+    background: #eab308;
+    border-radius: 2px
+}
+
+.rl-tentacles-row {
+    gap: 4px;
+    align-items: flex-start
+}
+
+.rl-tentacle {
+    width: 8px;
+    border-radius: 4px;
+    animation: tentacle-wave 1.5s ease-in-out infinite
+}
+
+@keyframes tentacle-wave {
+
+    0%,
+    100% {
+        transform: skewX(-5deg)
+    }
+
+    50% {
+        transform: skewX(5deg)
+    }
+}
+
+.rl-unicycle {
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-uni-stem {
+    width: 4px;
+    height: 16px;
+    background: #6b7280
+}
+
+.rl-uni-wheel {
+    width: 32px;
+    height: 32px;
+    border: 4px solid #374151;
+    border-radius: 50%;
+    position: relative
+}
+
+.rl-rboot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 6px
+}
+
+.rl-rboot-body {
+    width: 16px;
+    height: 24px;
+    border-radius: 4px
+}
+
+.rl-rboot-flame {
+    width: 12px;
+    height: 20px;
+    background: linear-gradient(#f97316, #ef4444, transparent);
+    border-radius: 0 0 50% 50%
+}
+
+.rl-flame-rocket {
+    animation: flame-flicker .2s infinite alternate
+}
+
+.rl-flame-delay {
+    animation-delay: .1s
+}
+
+.rl-spider {
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-spider-body {
+    position: relative;
+    width: 30px;
+    height: 12px
+}
+
+.rl-spider-leg {
+    position: absolute;
+    width: 20px;
+    height: 3px;
+    background: #374151;
+    top: 50%;
+    transform-origin: 0 50%;
+    transform: rotate(var(--deg))
+}
+
+.rl-pogo-wrap {
+    justify-content: center
+}
+
+.rl-pogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.rl-pogo-bounce {
+    animation: spring-bounce .6s ease-in-out infinite
+}
+
+.rl-pogo-handle {
+    width: 20px;
+    height: 4px;
+    background: #6b7280;
+    border-radius: 2px
+}
+
+.rl-pogo-shaft {
+    width: 4px;
+    height: 20px;
+    background: #9ca3af
+}
+
+.rl-pogo-spring {
+    width: 8px;
+    height: 8px;
+    border: 2px solid #eab308;
+    border-radius: 2px
+}
+
+.rl-pogo-base {
+    width: 16px;
+    height: 4px;
+    background: #374151;
+    border-radius: 2px
+}
+
+/* ================================================================
+   ROBOT PARTS – Arms
+   ================================================================ */
+.ra {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 30px
+}
+
+.ra-flip {
+    transform: scaleX(-1)
+}
+
+.ra-seg {
+    border-radius: 4px
+}
+
+.ra-seg-upper {
+    width: 10px;
+    height: 20px;
+    background: #6b7280
+}
+
+.ra-seg-lower {
+    width: 8px;
+    height: 18px;
+    background: #9ca3af
+}
+
+.ra-joint {
+    width: 10px;
+    height: 10px;
+    background: #4b5563;
+    border-radius: 50%;
+    margin: 2px 0
+}
+
+.ra-hand-flat {
+    width: 16px;
+    height: 8px;
+    background: #d1d5db;
+    border-radius: 4px
+}
+
+.ra-wobble {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.ra-claw-arm {
+    width: 6px;
+    height: 24px;
+    background: #6b7280
+}
+
+.ra-claw-swing {
+    animation: wiggle 1.5s ease-in-out infinite
+}
+
+.ra-claw-pincer {
+    display: flex;
+    gap: 2px
+}
+
+.ra-pincer-l,
+.ra-pincer-r {
+    width: 8px;
+    height: 14px;
+    background: #374151;
+    border-radius: 2px
+}
+
+.ra-pincer-open {
+    animation: pincer 1.5s ease-in-out infinite
+}
+
+@keyframes pincer {
+
+    0%,
+    100% {
+        transform: rotate(-15deg)
+    }
+
+    50% {
+        transform: rotate(5deg)
+    }
+}
+
+.ra-drill-arm {
+    width: 6px;
+    height: 18px;
+    background: #6b7280
+}
+
+.ra-drill-sway {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.ra-drill-bit {
+    width: 16px;
+    height: 24px;
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    clip-path: polygon(50% 100%, 0 0, 100% 0)
+}
+
+.ra-drill-spin {
+    animation: spin .5s linear infinite
+}
+
+.ra-sword-hilt {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.ra-sword-parry {
+    animation: wiggle 2s ease-in-out infinite;
+    transform-origin: bottom
+}
+
+.ra-guard {
+    width: 18px;
+    height: 6px;
+    background: #78716c;
+    border-radius: 2px
+}
+
+.ra-blade {
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(#e2e8f0, #94a3b8);
+    border-radius: 2px 2px 0 0
+}
+
+.ra-wing {
+    min-width: 45px
+}
+
+.ra-wing-flap {
+    animation: wing-flap 1s ease-in-out infinite;
+    transform-origin: right center
+}
+
+@keyframes wing-flap {
+
+    0%,
+    100% {
+        transform: rotate(-5deg)
+    }
+
+    50% {
+        transform: rotate(15deg)
+    }
+}
+
+.ra-tentacle-wave {
+    animation: tentacle-wave 2s ease-in-out infinite
+}
+
+.ra-glove-arm {
+    width: 6px;
+    height: 16px;
+    background: #6b7280
+}
+
+.ra-glove {
+    width: 22px;
+    height: 20px;
+    background: #dc2626;
+    border-radius: 50%
+}
+
+.ra-glove-jab {
+    animation: jab 1s ease-in-out infinite
+}
+
+@keyframes jab {
+
+    0%,
+    80%,
+    100% {
+        transform: translateY(0)
+    }
+
+    90% {
+        transform: translateY(8px)
+    }
+}
+
+.ra-wand-grip {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.ra-wand-wave {
+    animation: wand-wave 2s ease-in-out infinite;
+    transform-origin: bottom
+}
+
+@keyframes wand-wave {
+
+    0%,
+    100% {
+        transform: rotate(-10deg)
+    }
+
+    50% {
+        transform: rotate(10deg)
+    }
+}
+
+.ra-wand-shaft {
+    width: 5px;
+    height: 30px;
+    background: linear-gradient(#f59e0b, #78716c);
+    border-radius: 2px
+}
+
+.ra-wand-star {
+    font-size: 18px
+}
+
+.ra-star-twinkle {
+    animation: pulse 1s ease-in-out infinite
+}
+
+.ra-hook-arm {
+    min-height: 24px
+}
+
+.ra-hook-sway {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.ra-cannon-base {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.ra-cannon-aim {
+    animation: wiggle 3s ease-in-out infinite
+}
+
+.ra-cannon-barrel {
+    width: 14px;
+    height: 28px;
+    background: #374151;
+    border-radius: 4px 4px 2px 2px
+}
+
+.ra-cannon-charge {
+    width: 10px;
+    height: 10px;
+    background: #3b82f6;
+    border-radius: 50%;
+    margin-top: 2px
+}
+
+.ra-charge-pulse {
+    animation: pulse .8s infinite;
+    box-shadow: 0 0 10px #3b82f6
+}
+
+.ra-brush {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.ra-brush-stroke {
+    animation: wiggle 1.5s ease-in-out infinite
+}
+
+.ra-brush-handle {
+    width: 6px;
+    height: 20px;
+    background: #92400e;
+    border-radius: 2px
+}
+
+.ra-brush-bristles {
+    width: 14px;
+    height: 10px;
+    background: #ec4899;
+    border-radius: 0 0 4px 4px;
+    position: relative
+}
+
+.ra-drip {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    width: 4px;
+    height: 6px;
+    background: #ec4899;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    animation: drip 2s ease-in-out infinite
+}
+
+@keyframes drip {
+
+    0%,
+    80% {
+        opacity: 0
+    }
+
+    90% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(4px)
+    }
+
+    100% {
+        opacity: 0
+    }
+}
+
+.ra-shield-arm {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.ra-shield-guard {
+    animation: wiggle 3s ease-in-out infinite
+}
+
+.ra-shield-disc {
+    width: 32px;
+    height: 32px;
+    background: #6b7280;
+    border-radius: 50%;
+    border: 4px solid #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px
+}

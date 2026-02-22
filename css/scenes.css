@@ -1,0 +1,566 @@
+/* ================================================================
+   SCENES – Background environments
+   ================================================================ */
+.scene-gear {
+    position: absolute;
+    border-radius: 50%;
+    border: 8px dashed rgba(250, 204, 21, .15)
+}
+
+.scene-conveyor {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 24px;
+    background: repeating-linear-gradient(90deg, #374151 0, #374151 20px, #4b5563 20px, #4b5563 40px)
+}
+
+.scene-conveyor-belt {
+    width: 100%;
+    height: 100%;
+    animation: tread-scroll 2s linear infinite
+}
+
+.scene-star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite
+}
+
+.scene-planet {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(#7c3aed, #4c1d95);
+    box-shadow: 0 0 30px rgba(124, 58, 237, .4)
+}
+
+.scene-moon-orb {
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #fef08a;
+    box-shadow: 0 0 40px rgba(254, 240, 138, .5)
+}
+
+.scene-moon-ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: #1f2937;
+    border-radius: 50% 50% 0 0
+}
+
+.scene-ufo {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+    font-size: 48px
+}
+
+.scene-float-slow {
+    animation: floatY 8s ease-in-out infinite
+}
+
+.scene-crater {
+    position: absolute;
+    background: #374151;
+    border-radius: 50%
+}
+
+.scene-monkey {
+    position: absolute;
+    top: 20%;
+    right: 15%;
+    font-size: 48px
+}
+
+.scene-monkey-bounce {
+    animation: bounce-small 2s ease-in-out infinite
+}
+
+.scene-leaf {
+    font-size: 20px;
+    margin-left: 4px
+}
+
+.scene-parrot {
+    position: absolute;
+    top: 30%;
+    left: 12%;
+    font-size: 40px
+}
+
+.scene-parrot-sway {
+    animation: wiggle 2s ease-in-out infinite
+}
+
+.scene-tree {
+    position: absolute;
+    bottom: 5%;
+    left: 8%;
+    font-size: 64px
+}
+
+.scene-tree-breathe {
+    animation: floatY 6s ease-in-out infinite
+}
+
+.scene-vine {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 40%;
+    background: linear-gradient(#065f46, transparent);
+    border-radius: 4px
+}
+
+.scene-vine-left {
+    left: 5%
+}
+
+.scene-vine-right {
+    right: 5%
+}
+
+.scene-mars-ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25%;
+    background: #7f1d1d;
+    border-radius: 40% 40% 0 0
+}
+
+.scene-dust {
+    position: absolute;
+    bottom: 20%;
+    width: 6px;
+    height: 6px;
+    background: rgba(239, 68, 68, .4);
+    border-radius: 50%;
+    animation: dust-drift 4s ease-in-out infinite
+}
+
+@keyframes dust-drift {
+    0% {
+        opacity: 0;
+        transform: translateY(0)
+    }
+
+    50% {
+        opacity: .6
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-60px) translateX(20px)
+    }
+}
+
+.scene-comet {
+    position: absolute;
+    top: 15%;
+    left: 80%;
+    font-size: 36px
+}
+
+.scene-comet-drift {
+    animation: comet-drift 10s linear infinite
+}
+
+@keyframes comet-drift {
+    0% {
+        left: 110%;
+        top: 5%
+    }
+
+    100% {
+        left: -20%;
+        top: 40%
+    }
+}
+
+.scene-bubble {
+    position: absolute;
+    bottom: -20%;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .05);
+    animation: bubble-rise-scene 6s ease-in infinite
+}
+
+@keyframes bubble-rise-scene {
+    0% {
+        bottom: -10%;
+        opacity: .6
+    }
+
+    100% {
+        bottom: 110%;
+        opacity: 0
+    }
+}
+
+.scene-fish {
+    position: absolute;
+    top: 30%;
+    font-size: 36px
+}
+
+.scene-fish-swim {
+    animation: fish-swim 12s linear infinite
+}
+
+.scene-fish-swim-rev {
+    animation: fish-swim 12s linear infinite reverse
+}
+
+@keyframes fish-swim {
+    0% {
+        left: -10%
+    }
+
+    100% {
+        left: 110%
+    }
+}
+
+.scene-turtle {
+    position: absolute;
+    bottom: 15%;
+    left: 60%;
+    font-size: 40px
+}
+
+.scene-turtle-drift {
+    animation: floatY 10s ease-in-out infinite
+}
+
+.scene-candy-ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20%;
+    background: #fbcfe8;
+    border-radius: 50% 50% 0 0
+}
+
+.scene-candy {
+    position: absolute;
+    font-size: 48px;
+    animation: floatY 5s ease-in-out infinite
+}
+
+.scene-candy-1 {
+    top: 15%;
+    left: 10%
+}
+
+.scene-candy-2 {
+    top: 25%;
+    right: 15%;
+    animation-delay: 1s
+}
+
+.scene-candy-3 {
+    bottom: 25%;
+    left: 25%;
+    animation-delay: 2s
+}
+
+.scene-candy-4 {
+    top: 40%;
+    right: 30%;
+    animation-delay: .5s
+}
+
+.scene-volcano-cone {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-bottom: 200px solid #7f1d1d
+}
+
+.scene-lava {
+    position: absolute;
+    bottom: 40%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #f97316;
+    border-radius: 50%;
+    animation: lava-burst 3s ease-out infinite
+}
+
+@keyframes lava-burst {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1
+    }
+
+    100% {
+        transform: translateY(-200px) translateX(var(--lava-x, 0));
+        opacity: 0
+    }
+}
+
+.scene-lava-glow {
+    position: absolute;
+    bottom: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 20px;
+    background: #f97316;
+    border-radius: 50%;
+    filter: blur(15px);
+    animation: pulse 1s infinite
+}
+
+.scene-snowflake {
+    position: absolute;
+    top: -10px;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    animation: snowfall 6s linear infinite
+}
+
+@keyframes snowfall {
+    0% {
+        top: -5%;
+        opacity: .8;
+        transform: translateX(0)
+    }
+
+    100% {
+        top: 105%;
+        opacity: 0;
+        transform: translateX(var(--drift, 0))
+    }
+}
+
+.scene-penguin {
+    position: absolute;
+    bottom: 15%;
+    right: 20%;
+    font-size: 48px
+}
+
+.scene-penguin-waddle {
+    animation: wiggle 1s ease-in-out infinite
+}
+
+.scene-iceberg {
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    width: 120px;
+    height: 60px;
+    background: #e0f2fe;
+    border-radius: 20px 40px 0 0;
+    opacity: .7
+}
+
+.scene-sun {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background: #fbbf24;
+    border-radius: 50%
+}
+
+.scene-sun-pulse {
+    box-shadow: 0 0 60px rgba(251, 191, 36, .5);
+    animation: pulse 3s ease-in-out infinite
+}
+
+.scene-horizon-bar {
+    position: absolute;
+    bottom: 25%;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, .2)
+}
+
+.scene-bird {
+    position: absolute;
+    font-size: 32px
+}
+
+.scene-bird-1 {
+    top: 20%;
+    animation: fish-swim 15s linear infinite
+}
+
+.scene-bird-2 {
+    top: 30%;
+    animation: fish-swim 20s linear infinite reverse
+}
+
+.scene-ghost {
+    position: absolute;
+    top: 25%;
+    right: 20%;
+    font-size: 56px
+}
+
+.scene-ghost-float {
+    animation: floatY 4s ease-in-out infinite
+}
+
+.scene-bat {
+    position: absolute;
+    top: 15%;
+    left: 25%;
+    font-size: 36px
+}
+
+.scene-bat-flutter {
+    animation: wiggle .5s ease-in-out infinite
+}
+
+.scene-moon-small {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 40px;
+    height: 40px;
+    background: #fef08a;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(254, 240, 138, .5)
+}
+
+.scene-cobweb {
+    position: absolute;
+    font-size: 40px;
+    opacity: .4
+}
+
+.scene-cobweb-tl {
+    top: 0;
+    left: 0
+}
+
+.scene-cobweb-tr {
+    top: 0;
+    right: 0;
+    transform: scaleX(-1)
+}
+
+.scene-haunted-bar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(transparent, rgba(88, 28, 135, .4))
+}
+
+.scene-disco-ball {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(#fff, #cbd5e1);
+    box-shadow: 0 0 40px rgba(255, 255, 255, .3);
+    animation: spin 8s linear infinite
+}
+
+.scene-disco-floor {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px
+}
+
+.scene-disco-tile {
+    animation: disco-flash 1.5s ease-in-out infinite alternate
+}
+
+@keyframes disco-flash {
+    0% {
+        background: #1e293b
+    }
+
+    50% {
+        background: var(--tile-color, #ec4899)
+    }
+
+    100% {
+        background: #1e293b
+    }
+}
+
+.scene-disco-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 4px solid rgba(236, 72, 153, .2);
+    border-radius: 50%;
+    animation: spin 6s linear infinite
+}
+
+.scene-disco-spotlights {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden
+}
+
+.scene-spotlight {
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    opacity: .1
+}
+
+.scene-spotlight-l {
+    left: 10%;
+    background: linear-gradient(135deg, #ec4899, transparent 60%);
+    animation: spot-sway 4s ease-in-out infinite
+}
+
+.scene-spotlight-r {
+    right: 10%;
+    background: linear-gradient(225deg, #3b82f6, transparent 60%);
+    animation: spot-sway 4s ease-in-out infinite reverse
+}
+
+@keyframes spot-sway {
+
+    0%,
+    100% {
+        transform: skewX(-10deg)
+    }
+
+    50% {
+        transform: skewX(10deg)
+    }
+}
