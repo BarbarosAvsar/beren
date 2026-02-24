@@ -8,7 +8,6 @@ import { SceneService } from "./services/SceneService.js";
 import { AppController } from "./controllers/AppController.js";
 import { ControlsView } from "./ui/ControlsView.js";
 import { HudView } from "./ui/HudView.js";
-import { IconSprite } from "./ui/IconSprite.js";
 import { StageView } from "./ui/StageView.js";
 
 function queryRequired(id) {
@@ -20,9 +19,6 @@ function queryRequired(id) {
 }
 
 async function bootstrap() {
-  const iconSprite = new IconSprite("./assets/icons.svg");
-  await iconSprite.init();
-
   const bus = new EventBus();
   const nameService = new NameService();
   const robotModel = new RobotModel(bus, nameService);

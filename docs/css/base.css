@@ -1,0 +1,75 @@
+﻿:root {
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --bg: #0b1020;
+  --surface: #121a2f;
+  --surface-2: #1b2744;
+  --text: #e8edf9;
+  --text-muted: #afbddc;
+  --accent: #4fd1c5;
+  --accent-2: #f59e0b;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-hard: 0 8px 0 rgba(0, 0, 0, 0.4);
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --speed-fast: 160ms;
+  --speed-mid: 320ms;
+  --speed-slow: 800ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: radial-gradient(circle at top, #1d2a4d 0%, #0b1020 60%);
+  line-height: 1.4;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

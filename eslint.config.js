@@ -12,7 +12,7 @@ const vitestGlobals = {
 
 export default [
   {
-    ignores: ["dist", "node_modules", "coverage", "playwright-report", "test-results"],
+    ignores: ["app.js", "docs", "dist", "node_modules", "coverage", "playwright-report", "test-results"],
   },
   {
     files: ["**/*.js"],

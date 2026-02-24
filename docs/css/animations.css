@@ -1,0 +1,96 @@
+﻿@keyframes pulse-led {
+  0%,
+  100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@keyframes dance-bounce {
+  0%,
+  100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-28px) scale(1.05); }
+  60% { transform: translateY(0) scale(0.95); }
+}
+
+@keyframes dance-twist {
+  0%,
+  100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes dance-shimmy {
+  0%,
+  100% { transform: translateX(-14px) rotate(-4deg); }
+  50% { transform: translateX(14px) rotate(4deg); }
+}
+
+@keyframes dance-disco {
+  0%,
+  100% { transform: translateX(-10px) scale(1); }
+  40% { transform: translateX(12px) scale(0.92); }
+  70% { transform: translateX(-6px) scale(1.1); }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.35); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes exhaust-smoke {
+  0% { transform: translate(-50%, 0) scale(0.8); opacity: 0.7; }
+  100% { transform: translate(-50%, 36px) scale(2.1); opacity: 0; }
+}
+
+@keyframes exhaust-fire {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 0.95; }
+  100% { transform: translate(-50%, 30px) scale(0.35); opacity: 0; }
+}
+
+@keyframes toast-enter {
+  0% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes toast-exit {
+  0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+}
+
+.name-led {
+  animation: pulse-led 1.8s ease-in-out infinite;
+}
+
+.part-button .robot-piece {
+  animation: pop-in 220ms ease;
+}
+
+.robot-dancer.dance-bounce {
+  animation: dance-bounce 560ms ease infinite;
+}
+
+.robot-dancer.dance-twist {
+  animation: dance-twist 680ms ease infinite;
+}
+
+.robot-dancer.dance-shimmy {
+  animation: dance-shimmy 300ms ease infinite;
+}
+
+.robot-dancer.dance-disco {
+  animation: dance-disco 640ms ease infinite;
+}
+
+.exhaust-particle-smoke {
+  animation: exhaust-smoke 860ms ease-out forwards;
+}
+
+.exhaust-particle-fire {
+  animation: exhaust-fire 420ms ease-out forwards;
+}
+
+.toast.is-visible {
+  animation: toast-enter var(--speed-mid) ease forwards;
+}
+
+.toast.is-leaving {
+  animation: toast-exit var(--speed-mid) ease forwards;
+}
