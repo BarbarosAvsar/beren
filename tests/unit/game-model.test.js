@@ -1,5 +1,6 @@
 ﻿import { describe, it, expect, vi } from "vitest";
 
+import { HIDE_SEEK_SECONDS } from "../../js/core/Config.js";
 import { EventBus } from "../../js/core/EventBus.js";
 import { GameModel } from "../../js/domain/GameModel.js";
 
@@ -45,12 +46,12 @@ describe("GameModel", () => {
     bus.on("game:hide-seek:timeout", onTimeout);
 
     model.startHideSeek();
-    for (let i = 0; i < 30; i += 1) {
+    for (let i = 0; i < HIDE_SEEK_SECONDS; i += 1) {
       model.tickHideSeek();
     }
 
     expect(onTimeout).toHaveBeenCalledTimes(1);
     expect(model.snapshot.hideSeek.active).toBe(false);
-    expect(model.snapshot.hideSeek.secondsLeft).toBe(30);
+    expect(model.snapshot.hideSeek.secondsLeft).toBe(HIDE_SEEK_SECONDS);
   });
 });

@@ -1,4 +1,6 @@
-﻿export class HudView {
+﻿import { HIDE_SEEK_SECONDS } from "../core/Config.js";
+
+export class HudView {
   #bus;
   #nameButton;
   #nameText;
@@ -49,7 +51,7 @@
     if (!active) {
       this.#hideSeekHud.classList.add("is-hidden");
       this.#timer.classList.remove("is-warning");
-      this.#timer.textContent = "30";
+      this.#timer.textContent = String(HIDE_SEEK_SECONDS);
       return;
     }
 
@@ -63,6 +65,7 @@
       clearTimeout(this.#toastTimer);
       this.#toastTimer = null;
     }
+
     if (this.#toastHideTimer !== null) {
       clearTimeout(this.#toastHideTimer);
       this.#toastHideTimer = null;

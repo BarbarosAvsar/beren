@@ -1,4 +1,6 @@
-﻿export class AppController {
+import { HIDE_SEEK_SECONDS, MOVE_STEP_MS } from "../core/Config.js";
+
+export class AppController {
   #bus;
   #robotModel;
   #gameModel;
@@ -10,6 +12,7 @@
   #stageView;
   #moveInterval = null;
   #hideSeekInterval = null;
+  #currentHideContext = { hideSpots: [], occluderIds: [] };
 
   constructor(dependencies) {
     this.#bus = dependencies.bus;
@@ -29,13 +32,17 @@
     this.#stageView.init();
     this.#wireEvents();
 
-    this.#sceneService.render(this.#gameModel.snapshot.theme);
-    this.#stageView.render(this.#robotModel.snapshot);
-    this.#hudView.renderName(this.#robotModel.snapshot.name);
-    this.#hudView.renderEmotion(this.#robotModel.snapshot.emotion);
-    this.#hudView.renderHideSeek(false, 30, this.#gameModel.snapshot.hideSeek.score);
+    const gameState = this.#gameModel.snapshot;
+    const robotState = this.#robotModel.snapshot;
+
+    this.#currentHideContext = this.#sceneService.render(gameState.theme);
+    this.#stageView.render(robotState);
+    this.#hudView.renderName(robotState.name);
+    this.#hudView.renderEmotion(robotState.emotion);
+    this.#hudView.renderHideSeek(false, HIDE_SEEK_SECONDS, gameState.hideSeek.score);
     this.#syncControls();
     this.#syncExhaust();
+    this.#syncMotionState();
   }
 
   destroy() {
@@ -87,7 +94,7 @@
 
     this.#bus.on("game:theme", (event) => {
       const state = event.detail.state;
-      this.#sceneService.render(state.theme);
+      this.#currentHideContext = this.#sceneService.render(state.theme);
       this.#hudView.announce(`Theme changed to ${state.theme}.`);
     });
 
@@ -99,6 +106,8 @@
       } else {
         this.#stopMovementLoop();
       }
+
+      this.#syncMotionState();
       this.#syncExhaust();
     });
 
@@ -107,14 +116,13 @@
       this.#controlsView.setDanceActive(state.isDancing);
 
       if (state.isDancing) {
-        this.#stageView.setDance(state.dance.cssClass);
         this.#audioService.startMusic();
-        this.#audioService.speak(`${state.dance.name} mode.`);
+        this.#audioService.speak(`${state.dance.name} dance.`);
       } else {
-        this.#stageView.setDance(null);
         this.#audioService.stopMusic();
       }
 
+      this.#syncMotionState();
       this.#syncExhaust();
     });
 
@@ -125,8 +133,8 @@
       this.#hudView.announce("Hide and seek started. Find the robot.");
       this.#hudView.showToast("Find the robot");
       this.#audioService.playClick();
-      this.#audioService.speak("Find me if you can.");
-      this.#stageView.beginHideSeek();
+      this.#audioService.speak("Can you find me?");
+      this.#stageView.beginHideSeek(this.#currentHideContext);
       this.#startHideSeekLoop();
     });
 
@@ -144,7 +152,7 @@
 
     this.#bus.on("game:hide-seek:timeout", () => {
       this.#hudView.showToast("Time is up");
-      this.#audioService.playScratch();
+      this.#audioService.playClick();
       this.#audioService.speak("Time is up.");
     });
 
@@ -157,6 +165,7 @@
 
       if (event.detail.reason === "cancel") {
         this.#hudView.showToast("Hide and seek canceled", 1200);
+        this.#audioService.playClick();
       }
     });
   }
@@ -189,15 +198,10 @@
         this.#audioService.playClick();
         this.#gameModel.toggleMove();
         break;
-      case "toggleDance": {
-        if (this.#gameModel.snapshot.isDancing) {
-          this.#audioService.playScratch();
-        } else {
-          this.#audioService.playClick();
-        }
+      case "toggleDance":
+        this.#audioService.playClick();
         this.#gameModel.toggleDance();
         break;
-      }
       case "toggleHideSeek":
         if (this.#gameModel.snapshot.hideSeek.active) {
           this.#gameModel.cancelHideSeek();
@@ -212,9 +216,10 @@
 
   #startMovementLoop() {
     this.#stopMovementLoop();
+    this.#stageView.stepMovement();
     this.#moveInterval = setInterval(() => {
       this.#stageView.stepMovement();
-    }, 2500);
+    }, MOVE_STEP_MS);
   }
 
   #stopMovementLoop() {
@@ -243,6 +248,14 @@
     this.#controlsView.setMoveActive(state.isMoving);
     this.#controlsView.setDanceActive(state.isDancing);
     this.#controlsView.setHideSeekActive(state.hideSeek.active);
+  }
+
+  #syncMotionState() {
+    const state = this.#gameModel.snapshot;
+    this.#stageView.setMotionState({
+      isMoving: state.isMoving,
+      danceClass: state.isDancing ? state.dance.cssClass : null,
+    });
   }
 
   #syncExhaust() {

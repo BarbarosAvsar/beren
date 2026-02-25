@@ -1,33 +1,33 @@
 ﻿@keyframes pulse-led {
   0%,
-  100% { opacity: 0.35; }
+  100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
 
 @keyframes dance-bounce {
   0%,
   100% { transform: translateY(0) scale(1); }
-  30% { transform: translateY(-28px) scale(1.05); }
-  60% { transform: translateY(0) scale(0.95); }
+  35% { transform: translateY(-20px) scale(1.04); }
+  65% { transform: translateY(0) scale(0.97); }
 }
 
 @keyframes dance-twist {
   0%,
-  100% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
+  100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
 }
 
 @keyframes dance-shimmy {
   0%,
-  100% { transform: translateX(-14px) rotate(-4deg); }
-  50% { transform: translateX(14px) rotate(4deg); }
+  100% { transform: translateX(-11px) rotate(-4deg); }
+  50% { transform: translateX(11px) rotate(4deg); }
 }
 
 @keyframes dance-disco {
   0%,
-  100% { transform: translateX(-10px) scale(1); }
-  40% { transform: translateX(12px) scale(0.92); }
-  70% { transform: translateX(-6px) scale(1.1); }
+  100% { transform: translateX(-9px) scale(1); }
+  38% { transform: translateX(12px) scale(0.94); }
+  70% { transform: translateX(-6px) scale(1.08); }
 }
 
 @keyframes pop-in {
@@ -35,14 +35,92 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
+@keyframes arm-idle-left {
+  0%,
+  100% { transform: rotate(4deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes arm-idle-right {
+  0%,
+  100% { transform: rotate(-4deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+@keyframes arm-walk-left {
+  0%,
+  100% { transform: rotate(-16deg); }
+  50% { transform: rotate(16deg); }
+}
+
+@keyframes arm-walk-right {
+  0%,
+  100% { transform: rotate(16deg); }
+  50% { transform: rotate(-16deg); }
+}
+
+@keyframes arm-bounce-left {
+  0%,
+  100% { transform: rotate(-22deg) translateY(-2px); }
+  50% { transform: rotate(20deg) translateY(2px); }
+}
+
+@keyframes arm-bounce-right {
+  0%,
+  100% { transform: rotate(22deg) translateY(-2px); }
+  50% { transform: rotate(-20deg) translateY(2px); }
+}
+
+@keyframes arm-twist-left {
+  0%,
+  100% { transform: rotate(-34deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes arm-twist-right {
+  0%,
+  100% { transform: rotate(34deg); }
+  50% { transform: rotate(-4deg); }
+}
+
+@keyframes arm-shimmy-left {
+  0%,
+  100% { transform: rotate(-14deg) translateX(0); }
+  50% { transform: rotate(12deg) translateX(-6px); }
+}
+
+@keyframes arm-shimmy-right {
+  0%,
+  100% { transform: rotate(14deg) translateX(0); }
+  50% { transform: rotate(-12deg) translateX(6px); }
+}
+
+@keyframes arm-disco-left {
+  0%,
+  100% { transform: rotate(-34deg) translateY(0); }
+  50% { transform: rotate(20deg) translateY(-8px); }
+}
+
+@keyframes arm-disco-right {
+  0%,
+  100% { transform: rotate(34deg) translateY(0); }
+  50% { transform: rotate(-20deg) translateY(-8px); }
+}
+
+@keyframes robot-hint-pulse {
+  0%,
+  100% { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.55)); }
+  50% { filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.95)); }
+}
+
 @keyframes exhaust-smoke {
-  0% { transform: translate(-50%, 0) scale(0.8); opacity: 0.7; }
-  100% { transform: translate(-50%, 36px) scale(2.1); opacity: 0; }
+  0% { transform: translate(-50%, 0) scale(0.82); opacity: 0.7; }
+  100% { transform: translate(-50%, 34px) scale(2.1); opacity: 0; }
 }
 
 @keyframes exhaust-fire {
-  0% { transform: translate(-50%, 0) scale(1); opacity: 0.95; }
-  100% { transform: translate(-50%, 30px) scale(0.35); opacity: 0; }
+  0% { transform: translate(-50%, 0) scale(1); opacity: 0.92; }
+  100% { transform: translate(-50%, 28px) scale(0.35); opacity: 0; }
 }
 
 @keyframes toast-enter {
@@ -63,6 +141,59 @@
   animation: pop-in 220ms ease;
 }
 
+#part-arm-left,
+#part-arm-right {
+  transform-origin: center top;
+}
+
+#robot-dancer.is-idle #part-arm-left {
+  animation: arm-idle-left 2.8s ease-in-out infinite;
+}
+
+#robot-dancer.is-idle #part-arm-right {
+  animation: arm-idle-right 2.8s ease-in-out infinite;
+}
+
+#robot-dancer.is-moving #part-arm-left {
+  animation: arm-walk-left 560ms ease-in-out infinite;
+}
+
+#robot-dancer.is-moving #part-arm-right {
+  animation: arm-walk-right 560ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-bounce #part-arm-left {
+  animation: arm-bounce-left 400ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-bounce #part-arm-right {
+  animation: arm-bounce-right 400ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-twist #part-arm-left {
+  animation: arm-twist-left 560ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-twist #part-arm-right {
+  animation: arm-twist-right 560ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-shimmy #part-arm-left {
+  animation: arm-shimmy-left 280ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-shimmy #part-arm-right {
+  animation: arm-shimmy-right 280ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-disco #part-arm-left {
+  animation: arm-disco-left 420ms ease-in-out infinite;
+}
+
+#robot-dancer.is-dancing.dance-disco #part-arm-right {
+  animation: arm-disco-right 420ms ease-in-out infinite;
+}
+
 .robot-dancer.dance-bounce {
   animation: dance-bounce 560ms ease infinite;
 }
@@ -77,6 +208,10 @@
 
 .robot-dancer.dance-disco {
   animation: dance-disco 640ms ease infinite;
+}
+
+.robot-hint {
+  animation: robot-hint-pulse 700ms ease;
 }
 
 .exhaust-particle-smoke {

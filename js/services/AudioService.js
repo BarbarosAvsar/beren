@@ -58,31 +58,14 @@
   }
 
   playScratch() {
-    const ctx = this.#ensureContext();
-    if (!ctx) {
-      return;
-    }
-
-    const duration = 0.2;
-    const sampleCount = Math.floor(ctx.sampleRate * duration);
-    const buffer = ctx.createBuffer(1, sampleCount, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < sampleCount; i += 1) {
-      const t = i / sampleCount;
-      data[i] = (Math.random() * 2 - 1) * (1 - t) * 0.6;
-    }
-
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.22, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-
-    noise.connect(gain);
-    gain.connect(this.#masterGain);
-    noise.start(ctx.currentTime);
+    this.#playTone({
+      type: "triangle",
+      frequency: 300,
+      frequencyEnd: 220,
+      duration: 0.12,
+      gain: 0.04,
+      ramp: "linear",
+    });
   }
 
   startMusic() {
@@ -130,9 +113,9 @@
 
     this.#speech.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.12;
-    utterance.volume = 0.7;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.05;
+    utterance.volume = 0.55;
     this.#speech.speak(utterance);
   }
 
@@ -163,7 +146,7 @@
 
     this.#context = created;
     this.#masterGain = this.#context.createGain();
-    this.#masterGain.gain.value = 0.32;
+    this.#masterGain.gain.value = 0.18;
     this.#masterGain.connect(this.#context.destination);
 
     if (this.#context.state === "suspended") {

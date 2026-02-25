@@ -8,6 +8,8 @@
     "build": "npm run build:bundle && vite build",
     "build:bundle": "node ./scripts/build-bundle.mjs",
     "build:docs": "npm run build:bundle && node ./scripts/build-docs.mjs",
+    "pages:prepare": "npm run build:docs",
+    "pages:verify": "node ./scripts/verify-pages-static.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run --config vitest.config.js",

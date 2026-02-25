@@ -51,8 +51,9 @@
 
     <main class="app-main">
       <section id="stage-region" class="stage-region" aria-label="Robot stage" data-testid="stage-region">
-        <div id="scene-layer" class="scene-layer" aria-hidden="true"></div>
+        <div id="scene-background" class="scene-layer scene-background" aria-hidden="true"></div>
         <div id="stage-overlay" class="stage-overlay" aria-hidden="true"></div>
+        <div id="scene-foreground" class="scene-layer scene-foreground" aria-hidden="true"></div>
 
         <div id="robot-mover" class="robot-mover">
           <div id="robot-dancer" class="robot-dancer">
@@ -75,7 +76,7 @@
 
       <aside id="hide-seek-hud" class="hide-seek-hud is-hidden" aria-live="polite" data-testid="hide-seek-hud">
         <span class="hud-label">Hide and Seek</span>
-        <span class="hud-stat" id="hide-seek-timer" data-testid="hide-seek-timer">30</span>
+        <span class="hud-stat" id="hide-seek-timer" data-testid="hide-seek-timer">15</span>
         <span class="hud-stat" id="hide-seek-score" data-testid="hide-seek-score">0</span>
       </aside>
 

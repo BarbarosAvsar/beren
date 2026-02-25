@@ -1,4 +1,4 @@
-import path from "node:path";
+﻿import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test, expect } from "@playwright/test";
 
@@ -27,10 +27,19 @@ test("file protocol startup smoke flow", async ({ page }) => {
 
   await page.getByTestId("part-head").click();
   await page.getByTestId("control-mix").click();
+
+  const beforeMove = await page.locator("#robot-mover").evaluate((el) => el.style.transform);
+  await page.getByTestId("control-move").click();
+  await expect
+    .poll(async () => page.locator("#robot-mover").evaluate((el) => el.style.transform), { timeout: 3000 })
+    .not.toBe(beforeMove);
+  await page.getByTestId("control-move").click();
+
   await page.getByTestId("control-hide").click();
   await expect(page.getByTestId("hide-seek-hud")).toBeVisible();
+  await expect(page.locator(".scene-occluder.is-occluding")).toHaveCount(1);
 
-  await page.dispatchEvent("#robot-assembly", "click");
+  await page.dispatchEvent("#robot-mover", "click");
   await expect(page.getByTestId("hide-seek-hud")).toBeHidden();
 
   expect(consoleErrors).toEqual([]);

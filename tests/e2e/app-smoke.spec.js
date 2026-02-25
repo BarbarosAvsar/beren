@@ -24,13 +24,21 @@ test("vanilla app smoke flow", async ({ page }) => {
 
   await page.getByTestId("part-head").click();
   await page.getByTestId("part-legs").click();
-
   await page.getByTestId("control-mix").click();
+
+  const initialTransform = await page.locator("#robot-mover").evaluate((el) => el.style.transform);
+  await page.getByTestId("control-move").click();
+  await expect
+    .poll(async () => page.locator("#robot-mover").evaluate((el) => el.style.transform), { timeout: 3000 })
+    .not.toBe(initialTransform);
+  await expect(page.locator("#robot-dancer")).toHaveClass(/is-moving/);
+  await page.getByTestId("control-move").click();
+
   await page.getByTestId("control-scene").click();
   await page.getByTestId("control-color").click();
   await page.getByTestId("control-size").click();
 
-  for (let i = 0; i < 8; i += 1) {
+  for (let i = 0; i < 12; i += 1) {
     const isEngine = await page.getByTestId("part-body").getAttribute("data-engine");
     if (isEngine === "true") {
       break;
@@ -38,8 +46,11 @@ test("vanilla app smoke flow", async ({ page }) => {
     await page.getByTestId("part-body").click();
     await page.waitForTimeout(40);
   }
+
   await expect(page.getByTestId("part-body")).toHaveAttribute("data-engine", "true");
+
   await page.getByTestId("control-dance").click();
+  await expect(page.locator("#robot-dancer")).toHaveClass(/is-dancing/);
   await expect
     .poll(async () => page.locator("#exhaust-container").getAttribute("data-mode"), { timeout: 10000 })
     .toBe("fire");
@@ -47,10 +58,11 @@ test("vanilla app smoke flow", async ({ page }) => {
 
   await page.getByTestId("control-hide").click();
   await expect(page.getByTestId("hide-seek-hud")).toBeVisible();
+  await expect(page.locator("#robot-assembly")).toHaveClass(/robot-hidden/);
+  await expect(page.locator(".scene-occluder.is-occluding")).toHaveCount(1);
 
-  await page.dispatchEvent("#robot-assembly", "click");
+  await page.dispatchEvent("#robot-mover", "click");
   await expect(page.getByTestId("hide-seek-hud")).toBeHidden();
-
   await expect(page.getByTestId("hide-seek-score")).toHaveText("1");
 
   expect(blockedRequests).toEqual([]);

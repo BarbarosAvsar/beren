@@ -1,10 +1,10 @@
 ﻿:root {
-  --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Nunito", "Trebuchet MS", "Segoe UI", sans-serif;
   --bg: #0b1020;
   --surface: #121a2f;
   --surface-2: #1b2744;
-  --text: #e8edf9;
-  --text-muted: #afbddc;
+  --text: #eef2ff;
+  --text-muted: #bfcae8;
   --accent: #4fd1c5;
   --accent-2: #f59e0b;
   --danger: #ef4444;
@@ -39,12 +39,14 @@ body {
   font-family: var(--font-sans);
   color: var(--text);
   background: radial-gradient(circle at top, #1d2a4d 0%, #0b1020 60%);
-  line-height: 1.4;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
   font: inherit;
   color: inherit;
+  touch-action: manipulation;
 }
 
 .sr-only {

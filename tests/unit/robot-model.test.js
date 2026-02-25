@@ -6,6 +6,7 @@ import { RobotModel } from "../../js/domain/RobotModel.js";
 
 class FixedNameService {
   #index = 0;
+
   next() {
     this.#index += 1;
     return `Name ${this.#index}`;
@@ -13,6 +14,13 @@ class FixedNameService {
 }
 
 describe("RobotModel", () => {
+  it("uses large part catalogs", () => {
+    expect(PART_CATALOG.heads.length).toBeGreaterThanOrEqual(10);
+    expect(PART_CATALOG.bodies.length).toBeGreaterThanOrEqual(10);
+    expect(PART_CATALOG.arms.length).toBeGreaterThanOrEqual(10);
+    expect(PART_CATALOG.legs.length).toBeGreaterThanOrEqual(10);
+  });
+
   it("cycles parts with wraparound", () => {
     const bus = new EventBus();
     const model = new RobotModel(bus, new FixedNameService());
@@ -29,7 +37,7 @@ describe("RobotModel", () => {
     const model = new RobotModel(bus, new FixedNameService());
 
     let safety = 0;
-    while (!model.isEngineBody() && safety < 20) {
+    while (!model.isEngineBody() && safety < PART_CATALOG.bodies.length + 2) {
       model.cyclePart("body");
       safety += 1;
     }

@@ -65,6 +65,7 @@ class MockContext {
     this.currentTime = 0;
     this.sampleRate = 48000;
     this.destination = new MockNode();
+    this.createdGains = [];
   }
 
   createOscillator() {
@@ -72,7 +73,9 @@ class MockContext {
   }
 
   createGain() {
-    return new MockGain();
+    const gain = new MockGain();
+    this.createdGains.push(gain);
+    return gain;
   }
 
   createBuffer(channels, size) {
@@ -88,6 +91,7 @@ class MockContext {
   }
 
   resume() {}
+
   close() {
     this.state = "closed";
   }
@@ -95,7 +99,8 @@ class MockContext {
 
 describe("AudioService", () => {
   it("reuses a single audio context", () => {
-    const factory = vi.fn(() => new MockContext());
+    const context = new MockContext();
+    const factory = vi.fn(() => context);
     const speech = { cancel: vi.fn(), speak: vi.fn() };
 
     globalThis.SpeechSynthesisUtterance = class {
@@ -111,9 +116,10 @@ describe("AudioService", () => {
     audio.playSuccess();
 
     expect(factory).toHaveBeenCalledTimes(1);
+    expect(context.createdGains[0].gain.value).toBe(0.18);
   });
 
-  it("supports speech and teardown", () => {
+  it("uses toddler-friendly speech defaults and teardown", () => {
     const factory = vi.fn(() => new MockContext());
     const speech = { cancel: vi.fn(), speak: vi.fn() };
 
@@ -128,6 +134,11 @@ describe("AudioService", () => {
     audio.speak("hello");
     expect(speech.cancel).toHaveBeenCalledTimes(1);
     expect(speech.speak).toHaveBeenCalledTimes(1);
+
+    const utterance = speech.speak.mock.calls[0][0];
+    expect(utterance.rate).toBe(0.92);
+    expect(utterance.pitch).toBe(1.05);
+    expect(utterance.volume).toBe(0.55);
 
     audio.destroy();
     expect(speech.cancel).toHaveBeenCalledTimes(2);

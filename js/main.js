@@ -1,4 +1,4 @@
-﻿import { EventBus } from "./core/EventBus.js";
+import { EventBus } from "./core/EventBus.js";
 import { GameModel } from "./domain/GameModel.js";
 import { RobotModel } from "./domain/RobotModel.js";
 import { AudioService } from "./services/AudioService.js";
@@ -49,7 +49,7 @@ async function bootstrap() {
     legs: queryRequired("part-legs"),
   });
 
-  const sceneService = new SceneService(queryRequired("scene-layer"));
+  const sceneService = new SceneService(queryRequired("scene-background"), queryRequired("scene-foreground"));
   const exhaustService = new ExhaustService(queryRequired("exhaust-container"));
   const audioService = new AudioService();
 

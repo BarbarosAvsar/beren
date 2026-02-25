@@ -1,15 +1,17 @@
-# Robot Builder (Vanilla OOP)
+﻿# Robot Builder (Vanilla OOP)
 
-A fully client-side robot builder app implemented with plain HTML, CSS, and JavaScript.
+A fully client-side robot builder game implemented with plain HTML, CSS, and JavaScript.
 
 ## Features
 
-- Object-oriented architecture with small focused classes.
-- Scene switching, palette switching, size presets, randomize, movement, dance mode.
+- Object-oriented architecture with focused classes.
+- Toddler-first gameplay defaults (safer themes, gentler pacing/audio, larger touch targets).
+- Large robot part catalog (10+ options per head/body/arms/legs).
+- Immediate movement response and contextual arm choreography.
+- Hide-and-seek with real foreground occlusion, hints, timer, and score.
 - Engine bodies with smoke/fire exhaust effects.
-- Hide-and-seek mini game with timer and score.
 - Local SVG icons only (no external font/icon/CDN APIs).
-- Web Audio based SFX/music and speech synthesis announcements.
+- Web Audio SFX/music and speech synthesis prompts.
 
 ## Scripts
 
@@ -17,10 +19,12 @@ A fully client-side robot builder app implemented with plain HTML, CSS, and Java
 - `npm run build` - build `app.js` and run Vite production build
 - `npm run build:bundle` - bundle `js/main.js` to `app.js` for plain browser runtime
 - `npm run build:docs` - generate `docs/` for GitHub Pages publishing
+- `npm run pages:prepare` - build docs artifacts for Pages
+- `npm run pages:verify` - verify required static docs artifacts exist
 - `npm run preview` - preview production build
 - `npm run lint` - ESLint
 - `npm run test` - unit tests (Vitest)
-- `npm run test:e2e` - build bundle and run end-to-end smoke tests (Playwright)
+- `npm run test:e2e` - build bundle and run end-to-end tests (Playwright)
 - `npm run check` - lint + unit tests + build + docs artifact validation
 
 ## Local file run (no localhost)
@@ -29,18 +33,27 @@ A fully client-side robot builder app implemented with plain HTML, CSS, and Java
 2. Run `npm run build:bundle`
 3. Open `index.html` directly in your browser (double-click or drag into browser)
 
-## GitHub Pages deployment
+## GitHub Pages deployment (no Actions required)
 
-1. Run `npm run build:docs`
-2. Commit and push `docs/` to `main`
-3. Open repository `Settings -> Pages`
-4. Set `Source` to `Deploy from a branch`
-5. Set `Branch` to `main`
-6. Set folder to `/docs`
+1. Run `npm run pages:prepare`
+2. Run `npm run pages:verify`
+3. Commit and push `docs/` to `main`
+4. Open repository `Settings -> Pages`
+5. Set `Source` to `Deploy from a branch`
+6. Set `Branch` to `main`
+7. Set folder to `/docs`
 
 Published site URL:
 
 - `https://barbarosavsar.github.io/beren/`
+
+### Troubleshooting
+
+If GitHub shows:
+
+- `Actions is currently unavailable for your repository, and your Pages site requires a Jekyll build step`
+
+switch Pages source to `Deploy from a branch` (`main` + `/docs`) and keep `docs/.nojekyll` committed.
 
 ## Structure
 
@@ -50,4 +63,4 @@ Published site URL:
 - `js/` - core, domain, services, ui, controllers
 - `docs/` - GitHub Pages publish directory (generated)
 - `tests/unit/` - unit tests
-- `tests/e2e/` - Playwright smoke tests
+- `tests/e2e/` - Playwright tests
