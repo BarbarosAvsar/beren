@@ -5,6 +5,9 @@ import {
   MOVE_DELTA_Y,
   MOVE_TRANSITION_MS,
 } from "../core/Config.js";
+import { UI_EVENTS } from "../core/events.js";
+
+const VISUAL_KEYS = new Set(["head", "body", "arms", "legs", "palette", "scale"]);
 
 export class StageView {
   #bus;
@@ -17,14 +20,31 @@ export class StageView {
   #armLeft;
   #armRight;
   #legs;
+  #partNodes;
+  #partClickHandlers = new Map();
+  #mounted = false;
   #movePosition = { x: 0, y: 0 };
   #hideSeekActive = false;
   #hideSeekListener = null;
   #hideHintInterval = null;
   #hideHintTimeout = null;
   #activeOccluderId = null;
+  #randomIndex = null;
+  #hasRendered = false;
+  #renderedHeadKey = null;
+  #renderedBodyKey = null;
+  #renderedArmsKey = null;
+  #renderedLegsKey = null;
+  #renderedBodyHasEngine = null;
+  #renderedPalette = {
+    head: null,
+    body: null,
+    arms: null,
+    legs: null,
+  };
+  #renderedScale = null;
 
-  constructor(bus, elements) {
+  constructor(bus, elements, options = {}) {
     this.#bus = bus;
     this.#region = elements.region;
     this.#mover = elements.mover;
@@ -35,59 +55,127 @@ export class StageView {
     this.#armLeft = elements.armLeft;
     this.#armRight = elements.armRight;
     this.#legs = elements.legs;
+    this.#partNodes = [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legs];
+
+    if (typeof options.randomIndex === "function") {
+      this.#randomIndex = options.randomIndex;
+    }
   }
 
   init() {
     this.#mover.style.setProperty("--move-transition-ms", `${MOVE_TRANSITION_MS}ms`);
     this.setMotionState({ isMoving: false, danceClass: null });
+    this.mount();
+  }
 
-    [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legs].forEach((node) => {
-      node.addEventListener("click", () => {
+  mount() {
+    if (this.#mounted) {
+      return;
+    }
+
+    this.#partNodes.forEach((node) => {
+      const handler = () => {
         if (this.#hideSeekActive) {
           return;
         }
 
         const part = node.dataset.part;
-        this.#bus.emit("ui:part-cycle", { part });
-      });
+        this.#bus.emit(UI_EVENTS.PART_CYCLE, { part });
+      };
+
+      this.#partClickHandlers.set(node, handler);
+      node.addEventListener("click", handler);
     });
+
+    this.#mounted = true;
+  }
+
+  unmount() {
+    if (!this.#mounted) {
+      return;
+    }
+
+    this.#partClickHandlers.forEach((handler, node) => {
+      node.removeEventListener("click", handler);
+    });
+    this.#partClickHandlers.clear();
+
+    if (this.#hideSeekListener) {
+      this.#mover.removeEventListener("click", this.#hideSeekListener);
+      this.#hideSeekListener = null;
+    }
+
+    this.#mounted = false;
   }
 
   render(state) {
-    this.#renderPiece(this.#head, {
-      kind: "head",
-      key: state.head.key,
-      color: state.palette.head,
-    });
+    this.applyRobotChanges(state, [...VISUAL_KEYS]);
+  }
 
-    this.#renderPiece(this.#body, {
-      kind: "body",
-      key: state.body.key,
-      color: state.palette.body,
-      isEngine: state.bodyHasEngine,
-    });
+  applyRobotChanges(state, changed = []) {
+    const changedSet = new Set((Array.isArray(changed) ? changed : []).filter((key) => VISUAL_KEYS.has(key)));
+    const firstRender = !this.#hasRendered;
+    if (!firstRender && changedSet.size === 0) {
+      return;
+    }
 
-    this.#renderPiece(this.#armLeft, {
-      kind: "arm",
-      key: state.arms.key,
-      color: state.palette.arms,
-      mirror: true,
-    });
+    const shouldRebuildHead = firstRender || changedSet.has("head");
+    const shouldRebuildBody = firstRender || changedSet.has("body") || this.#renderedBodyHasEngine !== state.bodyHasEngine;
+    const shouldRebuildArms = firstRender || changedSet.has("arms");
+    const shouldRebuildLegs = firstRender || changedSet.has("legs");
 
-    this.#renderPiece(this.#armRight, {
-      kind: "arm",
-      key: state.arms.key,
-      color: state.palette.arms,
-      mirror: false,
-    });
+    if (shouldRebuildHead && this.#shouldRenderPiece(this.#renderedHeadKey, state.head.key, firstRender, changedSet, "head")) {
+      this.#renderPiece(this.#head, {
+        kind: "head",
+        key: state.head.key,
+        color: state.palette.head,
+      });
+    }
 
-    this.#renderPiece(this.#legs, {
-      kind: "legs",
-      key: state.legs.key,
-      color: state.palette.legs,
-    });
+    if (shouldRebuildBody && this.#shouldRenderBody(state, firstRender, changedSet)) {
+      this.#renderPiece(this.#body, {
+        kind: "body",
+        key: state.body.key,
+        color: state.palette.body,
+        isEngine: state.bodyHasEngine,
+      });
+    }
 
-    this.setScale(state.scale);
+    if (shouldRebuildArms && this.#shouldRenderPiece(this.#renderedArmsKey, state.arms.key, firstRender, changedSet, "arms")) {
+      this.#renderPiece(this.#armLeft, {
+        kind: "arm",
+        key: state.arms.key,
+        color: state.palette.arms,
+      });
+      this.#renderPiece(this.#armRight, {
+        kind: "arm",
+        key: state.arms.key,
+        color: state.palette.arms,
+      });
+    }
+
+    if (shouldRebuildLegs && this.#shouldRenderPiece(this.#renderedLegsKey, state.legs.key, firstRender, changedSet, "legs")) {
+      this.#renderPiece(this.#legs, {
+        kind: "legs",
+        key: state.legs.key,
+        color: state.palette.legs,
+      });
+    }
+
+    if (changedSet.has("palette") && !firstRender) {
+      this.#applyPaletteChanges(state, {
+        head: shouldRebuildHead,
+        body: shouldRebuildBody,
+        arms: shouldRebuildArms,
+        legs: shouldRebuildLegs,
+      });
+    }
+
+    if ((firstRender || changedSet.has("scale")) && this.#renderedScale !== state.scale) {
+      this.setScale(state.scale);
+    }
+
+    this.#cacheRenderedState(state);
   }
 
   setScale(scale) {
@@ -158,7 +246,7 @@ export class StageView {
       if (!this.#hideSeekActive) {
         return;
       }
-      this.#bus.emit("ui:hide-seek-found");
+      this.#bus.emit(UI_EVENTS.HIDE_SEEK_FOUND);
     };
 
     this.#mover.addEventListener("click", this.#hideSeekListener);
@@ -202,10 +290,83 @@ export class StageView {
 
   destroy() {
     this.endHideSeek();
+    this.unmount();
+  }
+
+  #applyPaletteChanges(state, rebuilt) {
+    if (!rebuilt.head && this.#renderedPalette.head !== state.palette.head && !this.#setPieceColor(this.#head, state.palette.head)) {
+      this.#renderPiece(this.#head, {
+        kind: "head",
+        key: state.head.key,
+        color: state.palette.head,
+      });
+    }
+
+    if (!rebuilt.body && this.#renderedPalette.body !== state.palette.body && !this.#setPieceColor(this.#body, state.palette.body)) {
+      this.#renderPiece(this.#body, {
+        kind: "body",
+        key: state.body.key,
+        color: state.palette.body,
+        isEngine: state.bodyHasEngine,
+      });
+    }
+
+    if (!rebuilt.arms && this.#renderedPalette.arms !== state.palette.arms) {
+      const updatedLeft = this.#setPieceColor(this.#armLeft, state.palette.arms);
+      const updatedRight = this.#setPieceColor(this.#armRight, state.palette.arms);
+      if (!updatedLeft || !updatedRight) {
+        this.#renderPiece(this.#armLeft, {
+          kind: "arm",
+          key: state.arms.key,
+          color: state.palette.arms,
+        });
+        this.#renderPiece(this.#armRight, {
+          kind: "arm",
+          key: state.arms.key,
+          color: state.palette.arms,
+        });
+      }
+    }
+
+    if (!rebuilt.legs && this.#renderedPalette.legs !== state.palette.legs && !this.#setPieceColor(this.#legs, state.palette.legs)) {
+      this.#renderPiece(this.#legs, {
+        kind: "legs",
+        key: state.legs.key,
+        color: state.palette.legs,
+      });
+    }
+  }
+
+  #shouldRenderPiece(renderedKey, nextKey, firstRender, changedSet, keyName) {
+    if (firstRender) {
+      return true;
+    }
+
+    if (renderedKey !== nextKey) {
+      return true;
+    }
+
+    return changedSet.has(keyName);
+  }
+
+  #shouldRenderBody(state, firstRender, changedSet) {
+    if (firstRender) {
+      return true;
+    }
+
+    if (this.#renderedBodyKey !== state.body.key) {
+      return true;
+    }
+
+    if (this.#renderedBodyHasEngine !== state.bodyHasEngine) {
+      return true;
+    }
+
+    return changedSet.has("body");
   }
 
   #renderPiece(targetButton, options) {
-    const { kind, key, color, isEngine = false, mirror = false } = options;
+    const { kind, key, color, isEngine = false } = options;
     const existingExhaust = kind === "body" ? targetButton.querySelector("#exhaust-container") : null;
 
     targetButton.innerHTML = "";
@@ -221,10 +382,6 @@ export class StageView {
 
     if (kind === "body" && isEngine) {
       piece.classList.add("robot-body-engine");
-    }
-
-    if (kind === "arm" && mirror) {
-      piece.classList.add("robot-arm-mirror");
     }
 
     this.#appendDetail(piece, kind, key);
@@ -245,6 +402,32 @@ export class StageView {
     piece.appendChild(detailSecondary);
   }
 
+  #setPieceColor(targetButton, color) {
+    const piece = targetButton.querySelector(".robot-piece");
+    if (!piece) {
+      return false;
+    }
+
+    piece.style.setProperty("--piece-color", color);
+    return true;
+  }
+
+  #cacheRenderedState(state) {
+    this.#hasRendered = true;
+    this.#renderedHeadKey = state.head.key;
+    this.#renderedBodyKey = state.body.key;
+    this.#renderedArmsKey = state.arms.key;
+    this.#renderedLegsKey = state.legs.key;
+    this.#renderedBodyHasEngine = state.bodyHasEngine;
+    this.#renderedPalette = {
+      head: state.palette.head,
+      body: state.palette.body,
+      arms: state.palette.arms,
+      legs: state.palette.legs,
+    };
+    this.#renderedScale = state.scale;
+  }
+
   #startHintLoop() {
     if (this.#hideHintInterval !== null) {
       clearInterval(this.#hideHintInterval);
@@ -254,6 +437,7 @@ export class StageView {
       if (!this.#hideSeekActive) {
         return;
       }
+
       this.#assembly.classList.add("robot-hint");
 
       if (this.#hideHintTimeout !== null) {
@@ -271,7 +455,7 @@ export class StageView {
   #pickHideSpot(hideContext) {
     const candidates = hideContext.hideSpots ?? [];
     if (candidates.length > 0) {
-      return candidates[Math.floor(Math.random() * candidates.length)];
+      return candidates[this.#pickRandomIndex(candidates.length)];
     }
 
     const bounds = this.#computeBounds();
@@ -281,7 +465,32 @@ export class StageView {
       { x: 0, y: bounds.minY + 15, peek: "up", occluderId: null },
     ];
 
-    return fallbackSpots[Math.floor(Math.random() * fallbackSpots.length)];
+    return fallbackSpots[this.#pickRandomIndex(fallbackSpots.length)];
+  }
+
+  #pickRandomIndex(length) {
+    if (length <= 1) {
+      return 0;
+    }
+
+    if (this.#randomIndex) {
+      const supplied = Number(this.#randomIndex(length));
+      if (Number.isInteger(supplied) && supplied >= 0) {
+        return supplied % length;
+      }
+    }
+
+    const cryptoApi = globalThis.crypto;
+    if (cryptoApi && typeof cryptoApi.getRandomValues === "function") {
+      const max = Math.floor(0x100000000 / length) * length;
+      const values = new Uint32Array(1);
+      do {
+        cryptoApi.getRandomValues(values);
+      } while (values[0] >= max);
+      return values[0] % length;
+    }
+
+    return Math.floor(Math.random() * length);
   }
 
   #applyPeekClass(peek) {

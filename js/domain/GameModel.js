@@ -1,4 +1,5 @@
-﻿import { DANCE_STYLES, HIDE_SEEK_SECONDS, THEMES } from "../core/Config.js";
+import { DANCE_STYLES, HIDE_SEEK_SECONDS, THEMES } from "../core/Config.js";
+import { GAME_EVENTS } from "../core/events.js";
 
 export class GameModel {
   #bus;
@@ -30,24 +31,24 @@ export class GameModel {
 
   nextTheme() {
     this.#themeIndex = (this.#themeIndex + 1) % THEMES.length;
-    this.#bus.emit("game:theme", { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.THEME, { state: this.snapshot });
   }
 
   toggleMove() {
     this.#isMoving = !this.#isMoving;
-    this.#bus.emit("game:move", { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.MOVE, { state: this.snapshot });
   }
 
   toggleDance() {
     if (this.#isDancing) {
       this.#isDancing = false;
-      this.#bus.emit("game:dance", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.DANCE, { state: this.snapshot });
       return;
     }
 
     this.#danceIndex = (this.#danceIndex + 1) % DANCE_STYLES.length;
     this.#isDancing = true;
-    this.#bus.emit("game:dance", { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.DANCE, { state: this.snapshot });
   }
 
   startHideSeek() {
@@ -61,7 +62,7 @@ export class GameModel {
       secondsLeft: HIDE_SEEK_SECONDS,
     };
 
-    this.#bus.emit("game:hide-seek:start", { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.HIDE_SEEK_START, { state: this.snapshot });
     return true;
   }
 
@@ -76,7 +77,7 @@ export class GameModel {
       secondsLeft: HIDE_SEEK_SECONDS,
     };
 
-    this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "cancel" });
+    this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "cancel" });
     return true;
   }
 
@@ -92,8 +93,8 @@ export class GameModel {
       score: this.#hideSeek.score + 1,
     };
 
-    this.#bus.emit("game:hide-seek:found", { state: this.snapshot });
-    this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "found" });
+    this.#bus.emit(GAME_EVENTS.HIDE_SEEK_FOUND, { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "found" });
     return true;
   }
 
@@ -108,7 +109,7 @@ export class GameModel {
       secondsLeft,
     };
 
-    this.#bus.emit("game:hide-seek:tick", { state: this.snapshot });
+    this.#bus.emit(GAME_EVENTS.HIDE_SEEK_TICK, { state: this.snapshot });
 
     if (secondsLeft <= 0) {
       this.#hideSeek = {
@@ -116,8 +117,8 @@ export class GameModel {
         active: false,
         secondsLeft: HIDE_SEEK_SECONDS,
       };
-      this.#bus.emit("game:hide-seek:timeout", { state: this.snapshot });
-      this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "timeout" });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_TIMEOUT, { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "timeout" });
     }
   }
 }

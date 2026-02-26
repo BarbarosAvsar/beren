@@ -1,0 +1,89 @@
+.name-plate {
+  border: 0;
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  min-width: min(92vw, 520px);
+  min-height: 64px;
+  background: linear-gradient(180deg, #1d355f, #162848);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.name-plate:focus-visible,
+.emotion-button:focus-visible,
+.control-button:focus-visible,
+.part-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.name-led {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  box-shadow: 0 0 14px rgba(125, 211, 252, 0.8);
+}
+
+.name-text {
+  font-size: clamp(1rem, 2.2vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.emotion-button {
+  border: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid rgba(255, 255, 255, 0.48);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.emotion-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.hide-seek-hud {
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: var(--shadow-soft);
+}
+
+.hud-label {
+  font-size: 0.94rem;
+  color: var(--text-muted);
+}
+
+.hud-stat {
+  min-width: 46px;
+  text-align: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 12px;
+  font-weight: 700;
+}
+
+.hud-stat.is-warning {
+  color: #fecaca;
+}
+
+.toast {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: var(--shadow-soft);
+}

@@ -1,7 +1,8 @@
-﻿import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
+import { PALETTES, PART_CATALOG, SCALE_PRESETS } from "../../js/core/Config.js";
+import { ALL_EVENT_TYPES, ROBOT_EVENTS } from "../../js/core/events.js";
 import { EventBus } from "../../js/core/EventBus.js";
-import { PART_CATALOG, SCALE_PRESETS } from "../../js/core/Config.js";
 import { RobotModel } from "../../js/domain/RobotModel.js";
 
 class FixedNameService {
@@ -15,14 +16,15 @@ class FixedNameService {
 
 describe("RobotModel", () => {
   it("uses large part catalogs", () => {
-    expect(PART_CATALOG.heads.length).toBeGreaterThanOrEqual(10);
-    expect(PART_CATALOG.bodies.length).toBeGreaterThanOrEqual(10);
-    expect(PART_CATALOG.arms.length).toBeGreaterThanOrEqual(10);
-    expect(PART_CATALOG.legs.length).toBeGreaterThanOrEqual(10);
+    expect(PART_CATALOG.heads.length).toBeGreaterThanOrEqual(18);
+    expect(PART_CATALOG.bodies.length).toBeGreaterThanOrEqual(18);
+    expect(PART_CATALOG.arms.length).toBeGreaterThanOrEqual(18);
+    expect(PART_CATALOG.legs.length).toBeGreaterThanOrEqual(18);
+    expect(PALETTES.length).toBeGreaterThanOrEqual(16);
   });
 
   it("cycles parts with wraparound", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new RobotModel(bus, new FixedNameService());
 
     for (let i = 0; i < PART_CATALOG.heads.length; i += 1) {
@@ -33,7 +35,7 @@ describe("RobotModel", () => {
   });
 
   it("detects engine body correctly", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new RobotModel(bus, new FixedNameService());
 
     let safety = 0;
@@ -46,11 +48,11 @@ describe("RobotModel", () => {
   });
 
   it("randomize stays in valid ranges and emits event", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new RobotModel(bus, new FixedNameService());
     const handler = vi.fn();
 
-    bus.on("robot:changed", handler);
+    bus.on(ROBOT_EVENTS.CHANGED, handler);
     model.randomize();
 
     const state = model.snapshot;

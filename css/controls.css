@@ -1,0 +1,60 @@
+.control-button {
+  display: grid;
+  grid-template-rows: 26px auto;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  min-height: 90px;
+  min-width: 72px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: transform var(--speed-fast), box-shadow var(--speed-fast), filter var(--speed-fast);
+}
+
+.control-button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.05);
+}
+
+.control-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.control-button[data-variant="scene"] { background: #2f6fec; }
+.control-button[data-variant="color"] { background: #1f9d74; }
+.control-button[data-variant="size"] { background: #ce54ce; }
+.control-button[data-variant="mix"] { background: #ea580c; }
+.control-button[data-variant="move"] { background: #0ea5e9; }
+.control-button[data-variant="dance"] { background: #8b5cf6; }
+.control-button[data-variant="hideSeek"] { background: #0f766e; }
+
+.control-button.is-active[data-variant="move"] {
+  background: #dc2626;
+}
+
+.control-button.is-active[data-variant="dance"] {
+  background: #ec4899;
+}
+
+.control-button.is-active[data-variant="hideSeek"] {
+  background: #f59e0b;
+  color: #1f2937;
+}
+
+.control-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.control-label {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}

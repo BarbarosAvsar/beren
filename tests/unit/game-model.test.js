@@ -1,12 +1,13 @@
-﻿import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 import { HIDE_SEEK_SECONDS } from "../../js/core/Config.js";
+import { ALL_EVENT_TYPES, GAME_EVENTS } from "../../js/core/events.js";
 import { EventBus } from "../../js/core/EventBus.js";
 import { GameModel } from "../../js/domain/GameModel.js";
 
 describe("GameModel", () => {
   it("toggles move and dance states", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new GameModel(bus);
 
     model.toggleMove();
@@ -20,13 +21,13 @@ describe("GameModel", () => {
   });
 
   it("runs hide and seek lifecycle", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new GameModel(bus);
     const onFound = vi.fn();
     const onEnd = vi.fn();
 
-    bus.on("game:hide-seek:found", onFound);
-    bus.on("game:hide-seek:end", onEnd);
+    bus.on(GAME_EVENTS.HIDE_SEEK_FOUND, onFound);
+    bus.on(GAME_EVENTS.HIDE_SEEK_END, onEnd);
 
     expect(model.startHideSeek()).toBe(true);
     expect(model.snapshot.hideSeek.active).toBe(true);
@@ -39,11 +40,11 @@ describe("GameModel", () => {
   });
 
   it("emits timeout when countdown reaches zero", () => {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const model = new GameModel(bus);
     const onTimeout = vi.fn();
 
-    bus.on("game:hide-seek:timeout", onTimeout);
+    bus.on(GAME_EVENTS.HIDE_SEEK_TIMEOUT, onTimeout);
 
     model.startHideSeek();
     for (let i = 0; i < HIDE_SEEK_SECONDS; i += 1) {

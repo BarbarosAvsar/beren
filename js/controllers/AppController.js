@@ -1,172 +1,174 @@
-import { HIDE_SEEK_SECONDS, MOVE_STEP_MS } from "../core/Config.js";
+import { MOVE_STEP_MS } from "../core/Config.js";
+import { GAME_EVENTS, ROBOT_EVENTS, UI_EVENTS } from "../core/events.js";
+import { GameFlowCoordinator } from "./coordinators/GameFlowCoordinator.js";
+import { RobotSyncCoordinator } from "./coordinators/RobotSyncCoordinator.js";
+import { UiSyncCoordinator } from "./coordinators/UiSyncCoordinator.js";
 
 export class AppController {
   #bus;
   #robotModel;
   #gameModel;
-  #sceneService;
-  #exhaustService;
   #audioService;
-  #controlsView;
-  #hudView;
+  #exhaustService;
   #stageView;
+  #hudView;
+  #uiSync;
+  #robotSync;
+  #gameFlow;
+  #listeners = [];
+  #latestRobotState = null;
+  #latestGameState = null;
   #moveInterval = null;
   #hideSeekInterval = null;
-  #currentHideContext = { hideSpots: [], occluderIds: [] };
 
   constructor(dependencies) {
     this.#bus = dependencies.bus;
     this.#robotModel = dependencies.robotModel;
     this.#gameModel = dependencies.gameModel;
-    this.#sceneService = dependencies.sceneService;
-    this.#exhaustService = dependencies.exhaustService;
     this.#audioService = dependencies.audioService;
-    this.#controlsView = dependencies.controlsView;
-    this.#hudView = dependencies.hudView;
+    this.#exhaustService = dependencies.exhaustService;
     this.#stageView = dependencies.stageView;
+    this.#hudView = dependencies.hudView;
+
+    this.#uiSync = new UiSyncCoordinator({
+      controlsView: dependencies.controlsView,
+      hudView: dependencies.hudView,
+      stageView: dependencies.stageView,
+    });
+
+    this.#robotSync = new RobotSyncCoordinator({
+      stageView: dependencies.stageView,
+      uiSync: this.#uiSync,
+      exhaustService: dependencies.exhaustService,
+    });
+
+    this.#gameFlow = new GameFlowCoordinator({
+      sceneService: dependencies.sceneService,
+      stageView: dependencies.stageView,
+      hudView: dependencies.hudView,
+      controlsView: dependencies.controlsView,
+      audioService: dependencies.audioService,
+    });
   }
 
   init() {
-    this.#controlsView.init();
-    this.#hudView.init();
-    this.#stageView.init();
+    this.#uiSync.initialize();
     this.#wireEvents();
 
     const gameState = this.#gameModel.snapshot;
     const robotState = this.#robotModel.snapshot;
+    this.#latestGameState = gameState;
+    this.#latestRobotState = robotState;
 
-    this.#currentHideContext = this.#sceneService.render(gameState.theme);
-    this.#stageView.render(robotState);
-    this.#hudView.renderName(robotState.name);
-    this.#hudView.renderEmotion(robotState.emotion);
-    this.#hudView.renderHideSeek(false, HIDE_SEEK_SECONDS, gameState.hideSeek.score);
-    this.#syncControls();
-    this.#syncExhaust();
-    this.#syncMotionState();
+    this.#gameFlow.renderInitialScene(gameState);
+    this.#uiSync.renderInitial(robotState, gameState);
+    this.#robotSync.syncExhaust(robotState, gameState);
   }
 
   destroy() {
     this.#stopMovementLoop();
     this.#stopHideSeekLoop();
-    this.#stageView.destroy();
+    this.#offAll();
+    this.#uiSync.destroy();
     this.#audioService.destroy();
     this.#exhaustService.destroy();
   }
 
   #wireEvents() {
-    this.#bus.on("ui:part-cycle", (event) => {
+    this.#on(UI_EVENTS.PART_CYCLE, (event) => {
       this.#audioService.playBoing();
       this.#robotModel.cyclePart(event.detail.part);
     });
 
-    this.#bus.on("ui:name-cycle", () => {
+    this.#on(UI_EVENTS.NAME_CYCLE, () => {
       this.#audioService.playClick();
       this.#robotModel.nextName();
     });
 
-    this.#bus.on("ui:emotion-cycle", () => {
+    this.#on(UI_EVENTS.EMOTION_CYCLE, () => {
       this.#audioService.playClick();
       this.#robotModel.cycleEmotion();
     });
 
-    this.#bus.on("ui:hide-seek-found", () => {
+    this.#on(UI_EVENTS.HIDE_SEEK_FOUND, () => {
       this.#gameModel.markHideSeekFound();
     });
 
-    this.#bus.on("ui:action", (event) => {
+    this.#on(UI_EVENTS.ACTION, (event) => {
       this.#handleAction(event.detail.action);
     });
 
-    this.#bus.on("robot:changed", (event) => {
+    this.#on(ROBOT_EVENTS.CHANGED, (event) => {
       const state = event.detail.state;
-      const changed = event.detail.changed;
+      const changed = Array.isArray(event.detail.changed) ? event.detail.changed : [];
+      this.#latestRobotState = state;
 
-      this.#stageView.render(state);
-      if (changed.includes("name")) {
-        this.#hudView.renderName(state.name);
-      }
-      if (changed.includes("emotion")) {
-        this.#hudView.renderEmotion(state.emotion);
-      }
-
-      this.#syncExhaust();
+      this.#robotSync.handleRobotChanged(state, changed, this.#latestGameState ?? this.#gameModel.snapshot);
     });
 
-    this.#bus.on("game:theme", (event) => {
+    this.#on(GAME_EVENTS.THEME, (event) => {
       const state = event.detail.state;
-      this.#currentHideContext = this.#sceneService.render(state.theme);
-      this.#hudView.announce(`Theme changed to ${state.theme}.`);
+      this.#latestGameState = state;
+      this.#gameFlow.handleThemeChanged(state);
     });
 
-    this.#bus.on("game:move", (event) => {
+    this.#on(GAME_EVENTS.MOVE, (event) => {
       const state = event.detail.state;
-      this.#controlsView.setMoveActive(state.isMoving);
-      if (state.isMoving) {
-        this.#startMovementLoop();
-      } else {
-        this.#stopMovementLoop();
-      }
+      this.#latestGameState = state;
 
-      this.#syncMotionState();
-      this.#syncExhaust();
+      this.#gameFlow.handleMoveChanged(state, {
+        startMovementLoop: () => this.#startMovementLoop(),
+        stopMovementLoop: () => this.#stopMovementLoop(),
+        syncMotionState: (nextState) => this.#uiSync.syncMotionState(nextState),
+      });
+
+      this.#robotSync.syncExhaust(this.#latestRobotState ?? this.#robotModel.snapshot, state);
     });
 
-    this.#bus.on("game:dance", (event) => {
+    this.#on(GAME_EVENTS.DANCE, (event) => {
       const state = event.detail.state;
-      this.#controlsView.setDanceActive(state.isDancing);
+      this.#latestGameState = state;
 
-      if (state.isDancing) {
-        this.#audioService.startMusic();
-        this.#audioService.speak(`${state.dance.name} dance.`);
-      } else {
-        this.#audioService.stopMusic();
-      }
+      this.#gameFlow.handleDanceChanged(state, {
+        syncMotionState: (nextState) => this.#uiSync.syncMotionState(nextState),
+      });
 
-      this.#syncMotionState();
-      this.#syncExhaust();
+      this.#robotSync.syncExhaust(this.#latestRobotState ?? this.#robotModel.snapshot, state);
     });
 
-    this.#bus.on("game:hide-seek:start", (event) => {
+    this.#on(GAME_EVENTS.HIDE_SEEK_START, (event) => {
       const state = event.detail.state;
-      this.#controlsView.setHideSeekActive(true);
-      this.#hudView.renderHideSeek(true, state.hideSeek.secondsLeft, state.hideSeek.score);
-      this.#hudView.announce("Hide and seek started. Find the robot.");
-      this.#hudView.showToast("Find the robot");
-      this.#audioService.playClick();
-      this.#audioService.speak("Can you find me?");
-      this.#stageView.beginHideSeek(this.#currentHideContext);
-      this.#startHideSeekLoop();
+      this.#latestGameState = state;
+
+      this.#gameFlow.handleHideSeekStart(state, {
+        startHideSeekLoop: () => this.#startHideSeekLoop(),
+      });
     });
 
-    this.#bus.on("game:hide-seek:tick", (event) => {
+    this.#on(GAME_EVENTS.HIDE_SEEK_TICK, (event) => {
       const state = event.detail.state;
-      this.#hudView.renderHideSeek(true, state.hideSeek.secondsLeft, state.hideSeek.score);
+      this.#latestGameState = state;
+      this.#gameFlow.handleHideSeekTick(state);
     });
 
-    this.#bus.on("game:hide-seek:found", (event) => {
+    this.#on(GAME_EVENTS.HIDE_SEEK_FOUND, (event) => {
       const state = event.detail.state;
-      this.#hudView.showToast(`Found. Score ${state.hideSeek.score}`);
-      this.#audioService.playSuccess();
-      this.#audioService.speak("You found me.");
+      this.#latestGameState = state;
+      this.#gameFlow.handleHideSeekFound(state);
     });
 
-    this.#bus.on("game:hide-seek:timeout", () => {
-      this.#hudView.showToast("Time is up");
-      this.#audioService.playClick();
-      this.#audioService.speak("Time is up.");
+    this.#on(GAME_EVENTS.HIDE_SEEK_TIMEOUT, (event) => {
+      this.#latestGameState = event.detail.state;
+      this.#gameFlow.handleHideSeekTimeout();
     });
 
-    this.#bus.on("game:hide-seek:end", (event) => {
+    this.#on(GAME_EVENTS.HIDE_SEEK_END, (event) => {
       const state = event.detail.state;
-      this.#controlsView.setHideSeekActive(false);
-      this.#hudView.renderHideSeek(false, state.hideSeek.secondsLeft, state.hideSeek.score);
-      this.#stageView.endHideSeek();
-      this.#stopHideSeekLoop();
+      this.#latestGameState = state;
 
-      if (event.detail.reason === "cancel") {
-        this.#hudView.showToast("Hide and seek canceled", 1200);
-        this.#audioService.playClick();
-      }
+      this.#gameFlow.handleHideSeekEnd(state, event.detail.reason, {
+        stopHideSeekLoop: () => this.#stopHideSeekLoop(),
+      });
     });
   }
 
@@ -175,7 +177,7 @@ export class AppController {
       case "nextTheme":
         this.#audioService.playSuccess();
         this.#gameModel.nextTheme();
-        this.#audioService.speak(this.#gameModel.snapshot.theme);
+        this.#audioService.speak(this.#latestGameState?.theme ?? this.#gameModel.snapshot.theme);
         break;
       case "nextPalette":
         this.#audioService.playSuccess();
@@ -203,7 +205,7 @@ export class AppController {
         this.#gameModel.toggleDance();
         break;
       case "toggleHideSeek":
-        if (this.#gameModel.snapshot.hideSeek.active) {
+        if ((this.#latestGameState ?? this.#gameModel.snapshot).hideSeek.active) {
           this.#gameModel.cancelHideSeek();
         } else {
           this.#gameModel.startHideSeek();
@@ -243,32 +245,15 @@ export class AppController {
     }
   }
 
-  #syncControls() {
-    const state = this.#gameModel.snapshot;
-    this.#controlsView.setMoveActive(state.isMoving);
-    this.#controlsView.setDanceActive(state.isDancing);
-    this.#controlsView.setHideSeekActive(state.hideSeek.active);
+  #on(type, handler) {
+    this.#bus.on(type, handler);
+    this.#listeners.push({ type, handler });
   }
 
-  #syncMotionState() {
-    const state = this.#gameModel.snapshot;
-    this.#stageView.setMotionState({
-      isMoving: state.isMoving,
-      danceClass: state.isDancing ? state.dance.cssClass : null,
+  #offAll() {
+    this.#listeners.forEach(({ type, handler }) => {
+      this.#bus.off(type, handler);
     });
-  }
-
-  #syncExhaust() {
-    const robot = this.#robotModel.snapshot;
-    const game = this.#gameModel.snapshot;
-
-    this.#exhaustService.setEnabled(robot.bodyHasEngine);
-
-    if (!robot.bodyHasEngine) {
-      this.#exhaustService.setMode("off");
-      return;
-    }
-
-    this.#exhaustService.setMode(game.isDancing ? "fire" : "smoke");
+    this.#listeners = [];
   }
 }

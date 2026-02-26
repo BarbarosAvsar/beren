@@ -1,0 +1,18 @@
+export const PALETTES = [
+  { name: "Steel", head: "#64748b", body: "#4b5563", arms: "#6b7280", legs: "#475569" },
+  { name: "Ocean", head: "#2563eb", body: "#1d4ed8", arms: "#38bdf8", legs: "#1e40af" },
+  { name: "Jungle", head: "#16a34a", body: "#15803d", arms: "#4ade80", legs: "#166534" },
+  { name: "Sun", head: "#f59e0b", body: "#f97316", arms: "#fbbf24", legs: "#ea580c" },
+  { name: "Berry", head: "#ec4899", body: "#d946ef", arms: "#f472b6", legs: "#be185d" },
+  { name: "Mint", head: "#22d3ee", body: "#14b8a6", arms: "#2dd4bf", legs: "#0f766e" },
+  { name: "Cloud", head: "#94a3b8", body: "#64748b", arms: "#cbd5e1", legs: "#475569" },
+  { name: "Coral", head: "#fb7185", body: "#f43f5e", arms: "#fdba74", legs: "#be123c" },
+  { name: "Neon", head: "#22d3ee", body: "#0ea5e9", arms: "#67e8f9", legs: "#0369a1" },
+  { name: "Arcade", head: "#f43f5e", body: "#7c3aed", arms: "#fb7185", legs: "#4c1d95" },
+  { name: "Bubblegum", head: "#f9a8d4", body: "#f472b6", arms: "#fde68a", legs: "#ec4899" },
+  { name: "Volt", head: "#bef264", body: "#84cc16", arms: "#d9f99d", legs: "#4d7c0f" },
+  { name: "Lava", head: "#fb923c", body: "#ea580c", arms: "#f97316", legs: "#9a3412" },
+  { name: "Royal", head: "#60a5fa", body: "#1d4ed8", arms: "#a78bfa", legs: "#312e81" },
+  { name: "Sand", head: "#fcd34d", body: "#f59e0b", arms: "#fde68a", legs: "#b45309" },
+  { name: "Midnight", head: "#334155", body: "#1e293b", arms: "#64748b", legs: "#0f172a" },
+];

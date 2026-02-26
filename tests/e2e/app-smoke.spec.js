@@ -1,4 +1,11 @@
-﻿import { test, expect } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+
+import {
+  readArmBodyDepth,
+  readIdentityMarkers,
+  readLayerOrder,
+  setIdentityMarkers,
+} from "./helpers/ui-helpers.js";
 
 test("vanilla app smoke flow", async ({ page }) => {
   const consoleErrors = [];
@@ -21,6 +28,29 @@ test("vanilla app smoke flow", async ({ page }) => {
 
   await expect(page.getByTestId("controls")).toBeVisible();
   await expect(page.getByTestId("part-head")).toBeVisible();
+  await expect(page.getByTestId("part-body")).toBeVisible();
+
+  const normalLayerOrder = await readLayerOrder(page);
+  expect(normalLayerOrder.hideTarget).toBe(false);
+  expect(normalLayerOrder.moverZ).toBeGreaterThan(normalLayerOrder.foregroundZ);
+
+  const depthOrder = await readArmBodyDepth(page);
+  expect(depthOrder.armLeftZ).toBeGreaterThan(depthOrder.bodyZ);
+  expect(depthOrder.armRightZ).toBeGreaterThan(depthOrder.bodyZ);
+
+  const marked = await setIdentityMarkers(page);
+  expect(marked).toBe(true);
+
+  await page.getByTestId("name-button").click();
+  await page.getByTestId("emotion-button").click();
+  const markersAfterNameEmotion = await readIdentityMarkers(page);
+  expect(markersAfterNameEmotion.head).toBe("keep");
+  expect(markersAfterNameEmotion.body).toBe("keep");
+
+  await page.getByTestId("part-head").click();
+  const markersAfterHeadChange = await readIdentityMarkers(page);
+  expect(markersAfterHeadChange.head).toBe(null);
+  expect(markersAfterHeadChange.body).toBe("keep");
 
   await page.getByTestId("part-head").click();
   await page.getByTestId("part-legs").click();
@@ -38,7 +68,7 @@ test("vanilla app smoke flow", async ({ page }) => {
   await page.getByTestId("control-color").click();
   await page.getByTestId("control-size").click();
 
-  for (let i = 0; i < 12; i += 1) {
+  for (let i = 0; i < 24; i += 1) {
     const isEngine = await page.getByTestId("part-body").getAttribute("data-engine");
     if (isEngine === "true") {
       break;
@@ -61,9 +91,17 @@ test("vanilla app smoke flow", async ({ page }) => {
   await expect(page.locator("#robot-assembly")).toHaveClass(/robot-hidden/);
   await expect(page.locator(".scene-occluder.is-occluding")).toHaveCount(1);
 
+  const hideLayerOrder = await readLayerOrder(page);
+  expect(hideLayerOrder.hideTarget).toBe(true);
+  expect(hideLayerOrder.moverZ).toBeLessThan(hideLayerOrder.foregroundZ);
+
   await page.dispatchEvent("#robot-mover", "click");
   await expect(page.getByTestId("hide-seek-hud")).toBeHidden();
   await expect(page.getByTestId("hide-seek-score")).toHaveText("1");
+
+  const restoredLayerOrder = await readLayerOrder(page);
+  expect(restoredLayerOrder.hideTarget).toBe(false);
+  expect(restoredLayerOrder.moverZ).toBeGreaterThan(restoredLayerOrder.foregroundZ);
 
   expect(blockedRequests).toEqual([]);
   expect(consoleErrors).toEqual([]);

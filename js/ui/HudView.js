@@ -1,4 +1,5 @@
-﻿import { HIDE_SEEK_SECONDS } from "../core/Config.js";
+import { HIDE_SEEK_SECONDS } from "../core/Config.js";
+import { UI_EVENTS } from "../core/events.js";
 
 export class HudView {
   #bus;
@@ -13,6 +14,9 @@ export class HudView {
   #live;
   #toastTimer = null;
   #toastHideTimer = null;
+  #mounted = false;
+  #onNameClick;
+  #onEmotionClick;
 
   constructor(bus, elements) {
     this.#bus = bus;
@@ -25,16 +29,43 @@ export class HudView {
     this.#score = elements.score;
     this.#toast = elements.toast;
     this.#live = elements.live;
+
+    this.#onNameClick = () => {
+      this.#bus.emit(UI_EVENTS.NAME_CYCLE);
+    };
+
+    this.#onEmotionClick = () => {
+      this.#bus.emit(UI_EVENTS.EMOTION_CYCLE);
+    };
   }
 
   init() {
-    this.#nameButton.addEventListener("click", () => {
-      this.#bus.emit("ui:name-cycle");
-    });
+    this.mount();
+  }
 
-    this.#emotionButton.addEventListener("click", () => {
-      this.#bus.emit("ui:emotion-cycle");
-    });
+  mount() {
+    if (this.#mounted) {
+      return;
+    }
+
+    this.#nameButton.addEventListener("click", this.#onNameClick);
+    this.#emotionButton.addEventListener("click", this.#onEmotionClick);
+    this.#mounted = true;
+  }
+
+  unmount() {
+    if (!this.#mounted) {
+      return;
+    }
+
+    this.#nameButton.removeEventListener("click", this.#onNameClick);
+    this.#emotionButton.removeEventListener("click", this.#onEmotionClick);
+    this.#mounted = false;
+  }
+
+  destroy() {
+    this.unmount();
+    this.#clearToastTimers();
   }
 
   renderName(name) {
@@ -61,15 +92,7 @@ export class HudView {
   }
 
   showToast(message, duration = 1800) {
-    if (this.#toastTimer !== null) {
-      clearTimeout(this.#toastTimer);
-      this.#toastTimer = null;
-    }
-
-    if (this.#toastHideTimer !== null) {
-      clearTimeout(this.#toastHideTimer);
-      this.#toastHideTimer = null;
-    }
+    this.#clearToastTimers();
 
     this.#toast.textContent = message;
     this.#toast.classList.remove("is-hidden", "is-leaving");
@@ -87,5 +110,17 @@ export class HudView {
 
   announce(text) {
     this.#live.textContent = text;
+  }
+
+  #clearToastTimers() {
+    if (this.#toastTimer !== null) {
+      clearTimeout(this.#toastTimer);
+      this.#toastTimer = null;
+    }
+
+    if (this.#toastHideTimer !== null) {
+      clearTimeout(this.#toastHideTimer);
+      this.#toastHideTimer = null;
+    }
   }
 }

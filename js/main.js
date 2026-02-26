@@ -1,3 +1,5 @@
+import { AppController } from "./controllers/AppController.js";
+import { ALL_EVENT_TYPES } from "./core/events.js";
 import { EventBus } from "./core/EventBus.js";
 import { GameModel } from "./domain/GameModel.js";
 import { RobotModel } from "./domain/RobotModel.js";
@@ -5,7 +7,6 @@ import { AudioService } from "./services/AudioService.js";
 import { ExhaustService } from "./services/ExhaustService.js";
 import { NameService } from "./services/NameService.js";
 import { SceneService } from "./services/SceneService.js";
-import { AppController } from "./controllers/AppController.js";
 import { ControlsView } from "./ui/ControlsView.js";
 import { HudView } from "./ui/HudView.js";
 import { StageView } from "./ui/StageView.js";
@@ -13,13 +14,13 @@ import { StageView } from "./ui/StageView.js";
 function queryRequired(id) {
   const node = document.getElementById(id);
   if (!node) {
-    throw new Error(`Missing element with id \"${id}\".`);
+    throw new Error(`Missing element with id "${id}".`);
   }
   return node;
 }
 
 async function bootstrap() {
-  const bus = new EventBus();
+  const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
   const nameService = new NameService();
   const robotModel = new RobotModel(bus, nameService);
   const gameModel = new GameModel(bus);
@@ -75,7 +76,7 @@ async function bootstrap() {
 bootstrap().catch((error) => {
   const root = document.getElementById("app");
   if (root) {
-    root.innerHTML = `<p style=\"padding:16px;color:#fecaca;background:#7f1d1d\">Startup failed: ${error.message}</p>`;
+    root.innerHTML = `<p style="padding:16px;color:#fecaca;background:#7f1d1d">Startup failed: ${error.message}</p>`;
   }
   console.error(error);
 });

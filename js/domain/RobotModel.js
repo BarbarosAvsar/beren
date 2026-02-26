@@ -1,4 +1,5 @@
-﻿import { EMOTIONS, PALETTES, PART_CATALOG, SCALE_PRESETS } from "../core/Config.js";
+import { EMOTIONS, PALETTES, PART_CATALOG, SCALE_PRESETS } from "../core/Config.js";
+import { ROBOT_EVENTS } from "../core/events.js";
 
 export class RobotModel {
   #bus;
@@ -98,7 +99,7 @@ export class RobotModel {
   }
 
   #emit(changed) {
-    this.#bus.emit("robot:changed", {
+    this.#bus.emit(ROBOT_EVENTS.CHANGED, {
       changed,
       state: this.snapshot,
     });

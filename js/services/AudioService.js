@@ -1,6 +1,9 @@
 ﻿export class AudioService {
   #contextFactory;
   #speech;
+  #speechLang = "en-US";
+  #selectedVoiceName = null;
+  #selectedVoiceLang = null;
   #context = null;
   #masterGain = null;
   #musicTimer = null;
@@ -19,6 +22,9 @@
     });
 
     this.#speech = options.speech ?? (typeof window !== "undefined" ? window.speechSynthesis : null);
+    if (typeof options.speechLang === "string" && options.speechLang.trim()) {
+      this.#speechLang = options.speechLang;
+    }
   }
 
   playClick() {
@@ -113,6 +119,11 @@
 
     this.#speech.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = this.#speechLang;
+    const voice = this.#pickSpeechVoice();
+    if (voice) {
+      utterance.voice = voice;
+    }
     utterance.rate = 0.92;
     utterance.pitch = 1.05;
     utterance.volume = 0.55;
@@ -317,6 +328,74 @@
     gain.connect(this.#masterGain);
     osc.start(time);
     osc.stop(time + 0.2);
+  }
+
+  #pickSpeechVoice() {
+    if (!this.#speech || typeof this.#speech.getVoices !== "function") {
+      return null;
+    }
+
+    let voices;
+    try {
+      voices = this.#speech.getVoices() ?? [];
+    } catch {
+      return null;
+    }
+
+    if (!Array.isArray(voices) || voices.length === 0) {
+      this.#selectedVoiceName = null;
+      this.#selectedVoiceLang = null;
+      return null;
+    }
+
+    if (this.#selectedVoiceName) {
+      const cached = voices.find((voice) => voice.name === this.#selectedVoiceName && String(voice.lang ?? "").toLowerCase() === this.#selectedVoiceLang);
+      if (cached) {
+        return cached;
+      }
+    }
+
+    const englishVoices = voices.filter((voice) => String(voice.lang ?? "").toLowerCase().startsWith("en"));
+    if (englishVoices.length === 0) {
+      this.#selectedVoiceName = null;
+      this.#selectedVoiceLang = null;
+      return null;
+    }
+
+    const ranked = [...englishVoices].sort((left, right) => {
+      const leftRank = this.#voiceRank(left.lang);
+      const rightRank = this.#voiceRank(right.lang);
+      if (leftRank !== rightRank) {
+        return leftRank - rightRank;
+      }
+
+      const leftLocal = left.localService ? 0 : 1;
+      const rightLocal = right.localService ? 0 : 1;
+      if (leftLocal !== rightLocal) {
+        return leftLocal - rightLocal;
+      }
+
+      return String(left.name ?? "").localeCompare(String(right.name ?? ""));
+    });
+
+    const selected = ranked[0];
+    this.#selectedVoiceName = selected.name;
+    this.#selectedVoiceLang = String(selected.lang ?? "").toLowerCase();
+    return selected;
+  }
+
+  #voiceRank(lang) {
+    const normalized = String(lang ?? "").toLowerCase();
+    if (normalized === "en-us") {
+      return 0;
+    }
+    if (normalized.startsWith("en-us-")) {
+      return 1;
+    }
+    if (normalized === "en-gb") {
+      return 2;
+    }
+    return 3;
   }
 
   #schedule(callback, delayMs) {

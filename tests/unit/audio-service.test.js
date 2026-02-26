@@ -97,11 +97,19 @@ class MockContext {
   }
 }
 
+function createSpeech(voices = []) {
+  return {
+    cancel: vi.fn(),
+    speak: vi.fn(),
+    getVoices: vi.fn(() => voices),
+  };
+}
+
 describe("AudioService", () => {
   it("reuses a single audio context", () => {
     const context = new MockContext();
     const factory = vi.fn(() => context);
-    const speech = { cancel: vi.fn(), speak: vi.fn() };
+    const speech = createSpeech();
 
     globalThis.SpeechSynthesisUtterance = class {
       constructor(text) {
@@ -121,7 +129,7 @@ describe("AudioService", () => {
 
   it("uses toddler-friendly speech defaults and teardown", () => {
     const factory = vi.fn(() => new MockContext());
-    const speech = { cancel: vi.fn(), speak: vi.fn() };
+    const speech = createSpeech();
 
     globalThis.SpeechSynthesisUtterance = class {
       constructor(text) {
@@ -136,11 +144,71 @@ describe("AudioService", () => {
     expect(speech.speak).toHaveBeenCalledTimes(1);
 
     const utterance = speech.speak.mock.calls[0][0];
+    expect(utterance.lang).toBe("en-US");
     expect(utterance.rate).toBe(0.92);
     expect(utterance.pitch).toBe(1.05);
     expect(utterance.volume).toBe(0.55);
 
     audio.destroy();
     expect(speech.cancel).toHaveBeenCalledTimes(2);
+  });
+
+  it("prefers en-US voice over non-English and other English voices", () => {
+    const speech = createSpeech([
+      { name: "Deutsch", lang: "de-DE", localService: true },
+      { name: "English UK", lang: "en-GB", localService: true },
+      { name: "English US", lang: "en-US", localService: false },
+    ]);
+
+    globalThis.SpeechSynthesisUtterance = class {
+      constructor(text) {
+        this.text = text;
+      }
+    };
+
+    const audio = new AudioService({ speech });
+    audio.speak("hello");
+
+    const utterance = speech.speak.mock.calls[0][0];
+    expect(utterance.lang).toBe("en-US");
+    expect(utterance.voice.name).toBe("English US");
+  });
+
+  it("falls back to available English voice when en-US is not present", () => {
+    const speech = createSpeech([
+      { name: "Deutsch", lang: "de-DE", localService: true },
+      { name: "English AU", lang: "en-AU", localService: true },
+    ]);
+
+    globalThis.SpeechSynthesisUtterance = class {
+      constructor(text) {
+        this.text = text;
+      }
+    };
+
+    const audio = new AudioService({ speech });
+    audio.speak("hello");
+
+    const utterance = speech.speak.mock.calls[0][0];
+    expect(utterance.lang).toBe("en-US");
+    expect(utterance.voice.name).toBe("English AU");
+  });
+
+  it("still speaks with en-US lang when no English voice is available", () => {
+    const speech = createSpeech([{ name: "Deutsch", lang: "de-DE", localService: true }]);
+
+    globalThis.SpeechSynthesisUtterance = class {
+      constructor(text) {
+        this.text = text;
+      }
+    };
+
+    const audio = new AudioService({ speech });
+    audio.speak("hello");
+
+    expect(speech.speak).toHaveBeenCalledTimes(1);
+    const utterance = speech.speak.mock.calls[0][0];
+    expect(utterance.lang).toBe("en-US");
+    expect(utterance.voice).toBeUndefined();
   });
 });

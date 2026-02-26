@@ -1,12 +1,15 @@
-﻿# Robot Builder (Vanilla OOP)
+# Robot Builder (Vanilla OOP)
 
 A fully client-side robot builder game implemented with plain HTML, CSS, and JavaScript.
 
 ## Features
 
 - Object-oriented architecture with focused classes.
+- Explicit event contracts via centralized constants.
+- Incremental robot rendering (non-visual updates do not recreate robot parts).
+- View lifecycle safety (`init` + `mount/unmount/destroy`) to avoid listener duplication.
 - Toddler-first gameplay defaults (safer themes, gentler pacing/audio, larger touch targets).
-- Large robot part catalog (10+ options per head/body/arms/legs).
+- Large robot part catalog (18 options per head/body/arms/legs + 16 palettes).
 - Immediate movement response and contextual arm choreography.
 - Hide-and-seek with real foreground occlusion, hints, timer, and score.
 - Engine bodies with smoke/fire exhaust effects.
@@ -59,8 +62,12 @@ switch Pages source to `Deploy from a branch` (`main` + `/docs`) and keep `docs/
 
 - `index.html` - semantic app shell
 - `app.js` - browser-ready bundled runtime for direct file opening
-- `css/` - base/layout/components/animations
-- `js/` - core, domain, services, ui, controllers
+- `css/` - base/layout/animations + split component domains (`hud.css`, `controls.css`, `robot-parts.css`, `stage.css`)
+- `js/core/` - config modules, `events.js` event contracts, `EventBus`
+- `js/controllers/` - app controller + coordinator modules
+- `js/domain/` - game and robot state models
+- `js/services/` - audio/exhaust/name/scene services (`services/scene/themes.js` data)
+- `js/ui/` - stage, HUD, and controls views
 - `docs/` - GitHub Pages publish directory (generated)
 - `tests/unit/` - unit tests
-- `tests/e2e/` - Playwright tests
+- `tests/e2e/` - Playwright tests + shared e2e helpers

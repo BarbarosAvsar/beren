@@ -1,22 +1,16 @@
 (() => {
-  // js/core/EventBus.js
-  var EventBus = class {
-    #target;
-    constructor() {
-      this.#target = new EventTarget();
-    }
-    on(type, handler, options) {
-      this.#target.addEventListener(type, handler, options);
-    }
-    off(type, handler, options) {
-      this.#target.removeEventListener(type, handler, options);
-    }
-    emit(type, detail = {}) {
-      this.#target.dispatchEvent(new CustomEvent(type, { detail }));
-    }
-  };
+  // js/core/controls.js
+  var CONTROL_DEFINITIONS = [
+    { id: "scene", action: "nextTheme", label: "Scene", icon: "icon-scene", variant: "scene" },
+    { id: "color", action: "nextPalette", label: "Color", icon: "icon-color", variant: "color" },
+    { id: "size", action: "nextSize", label: "Size", icon: "icon-size", variant: "size" },
+    { id: "mix", action: "randomize", label: "Mix", icon: "icon-mix", variant: "mix" },
+    { id: "move", action: "toggleMove", label: "Move", icon: "icon-move", variant: "move" },
+    { id: "dance", action: "toggleDance", label: "Dance", icon: "icon-dance", variant: "dance" },
+    { id: "hide", action: "toggleHideSeek", label: "Hide", icon: "icon-hide", variant: "hideSeek" }
+  ];
 
-  // js/core/Config.js
+  // js/core/defaults.js
   var THEMES = [
     "Factory",
     "Space",
@@ -35,6 +29,15 @@
   ];
   var EMOTIONS = [":)", "B)", ":D", "xD", "o_o", "^_^", "!!", "<3"];
   var SCALE_PRESETS = [0.78, 0.9, 1, 1.12, 1.24, 1.36, 1.5];
+  var HIDE_SEEK_SECONDS = 15;
+  var MOVE_STEP_MS = 900;
+  var MOVE_TRANSITION_MS = 650;
+  var MOVE_DELTA_X = 120;
+  var MOVE_DELTA_Y = 55;
+  var HIDE_HINT_INTERVAL_MS = 2600;
+  var HIDE_HINT_DURATION_MS = 700;
+
+  // js/core/palettes.js
   var PALETTES = [
     { name: "Steel", head: "#64748b", body: "#4b5563", arms: "#6b7280", legs: "#475569" },
     { name: "Ocean", head: "#2563eb", body: "#1d4ed8", arms: "#38bdf8", legs: "#1e40af" },
@@ -43,8 +46,18 @@
     { name: "Berry", head: "#ec4899", body: "#d946ef", arms: "#f472b6", legs: "#be185d" },
     { name: "Mint", head: "#22d3ee", body: "#14b8a6", arms: "#2dd4bf", legs: "#0f766e" },
     { name: "Cloud", head: "#94a3b8", body: "#64748b", arms: "#cbd5e1", legs: "#475569" },
-    { name: "Coral", head: "#fb7185", body: "#f43f5e", arms: "#fdba74", legs: "#be123c" }
+    { name: "Coral", head: "#fb7185", body: "#f43f5e", arms: "#fdba74", legs: "#be123c" },
+    { name: "Neon", head: "#22d3ee", body: "#0ea5e9", arms: "#67e8f9", legs: "#0369a1" },
+    { name: "Arcade", head: "#f43f5e", body: "#7c3aed", arms: "#fb7185", legs: "#4c1d95" },
+    { name: "Bubblegum", head: "#f9a8d4", body: "#f472b6", arms: "#fde68a", legs: "#ec4899" },
+    { name: "Volt", head: "#bef264", body: "#84cc16", arms: "#d9f99d", legs: "#4d7c0f" },
+    { name: "Lava", head: "#fb923c", body: "#ea580c", arms: "#f97316", legs: "#9a3412" },
+    { name: "Royal", head: "#60a5fa", body: "#1d4ed8", arms: "#a78bfa", legs: "#312e81" },
+    { name: "Sand", head: "#fcd34d", body: "#f59e0b", arms: "#fde68a", legs: "#b45309" },
+    { name: "Midnight", head: "#334155", body: "#1e293b", arms: "#64748b", legs: "#0f172a" }
   ];
+
+  // js/core/robot-parts.js
   var PART_CATALOG = {
     heads: [
       { key: "cube", variant: 0 },
@@ -56,7 +69,15 @@
       { key: "helmet", variant: 6 },
       { key: "star", variant: 7 },
       { key: "cloud", variant: 8 },
-      { key: "rocket", variant: 9 }
+      { key: "rocket", variant: 9 },
+      { key: "owl", variant: 10 },
+      { key: "donut", variant: 11 },
+      { key: "frog", variant: 12 },
+      { key: "tv", variant: 13 },
+      { key: "dice", variant: 14 },
+      { key: "beetle", variant: 15 },
+      { key: "kite", variant: 16 },
+      { key: "pumpkin", variant: 17 }
     ],
     bodies: [
       { key: "chest", variant: 0, engine: false },
@@ -68,7 +89,15 @@
       { key: "rocket", variant: 6, engine: false },
       { key: "gift", variant: 7, engine: false },
       { key: "engine", variant: 8, engine: true },
-      { key: "jet", variant: 9, engine: true }
+      { key: "jet", variant: 9, engine: true },
+      { key: "arcade", variant: 10, engine: false },
+      { key: "jelly", variant: 11, engine: false },
+      { key: "backpack", variant: 12, engine: false },
+      { key: "lantern", variant: 13, engine: false },
+      { key: "teapot", variant: 14, engine: false },
+      { key: "mailbox", variant: 15, engine: false },
+      { key: "reactor", variant: 16, engine: true },
+      { key: "sub", variant: 17, engine: true }
     ],
     arms: [
       { key: "claw", variant: 0 },
@@ -80,7 +109,15 @@
       { key: "hook", variant: 6 },
       { key: "drum", variant: 7 },
       { key: "brush", variant: 8 },
-      { key: "fan", variant: 9 }
+      { key: "fan", variant: 9 },
+      { key: "balloon", variant: 10 },
+      { key: "ribbon", variant: 11 },
+      { key: "grabber", variant: 12 },
+      { key: "laser", variant: 13 },
+      { key: "bubble", variant: 14 },
+      { key: "trumpet", variant: 15 },
+      { key: "noodle", variant: 16 },
+      { key: "pixel", variant: 17 }
     ],
     legs: [
       { key: "walker", variant: 0 },
@@ -92,25 +129,475 @@
       { key: "stompers", variant: 6 },
       { key: "pogo", variant: 7 },
       { key: "skates", variant: 8 },
-      { key: "paws", variant: 9 }
+      { key: "paws", variant: 9 },
+      { key: "spider", variant: 10 },
+      { key: "stilts", variant: 11 },
+      { key: "fins", variant: 12 },
+      { key: "skis", variant: 13 },
+      { key: "moon", variant: 14 },
+      { key: "tentacle", variant: 15 },
+      { key: "magnet", variant: 16 },
+      { key: "rollers", variant: 17 }
     ]
   };
-  var CONTROL_DEFINITIONS = [
-    { id: "scene", action: "nextTheme", label: "Scene", icon: "icon-scene", variant: "scene" },
-    { id: "color", action: "nextPalette", label: "Color", icon: "icon-color", variant: "color" },
-    { id: "size", action: "nextSize", label: "Size", icon: "icon-size", variant: "size" },
-    { id: "mix", action: "randomize", label: "Mix", icon: "icon-mix", variant: "mix" },
-    { id: "move", action: "toggleMove", label: "Move", icon: "icon-move", variant: "move" },
-    { id: "dance", action: "toggleDance", label: "Dance", icon: "icon-dance", variant: "dance" },
-    { id: "hide", action: "toggleHideSeek", label: "Hide", icon: "icon-hide", variant: "hideSeek" }
-  ];
-  var HIDE_SEEK_SECONDS = 15;
-  var MOVE_STEP_MS = 900;
-  var MOVE_TRANSITION_MS = 650;
-  var MOVE_DELTA_X = 120;
-  var MOVE_DELTA_Y = 55;
-  var HIDE_HINT_INTERVAL_MS = 2600;
-  var HIDE_HINT_DURATION_MS = 700;
+
+  // js/core/events.js
+  var UI_EVENTS = Object.freeze({
+    ACTION: "ui:action",
+    PART_CYCLE: "ui:part-cycle",
+    NAME_CYCLE: "ui:name-cycle",
+    EMOTION_CYCLE: "ui:emotion-cycle",
+    HIDE_SEEK_FOUND: "ui:hide-seek-found"
+  });
+  var ROBOT_EVENTS = Object.freeze({
+    CHANGED: "robot:changed"
+  });
+  var GAME_EVENTS = Object.freeze({
+    THEME: "game:theme",
+    MOVE: "game:move",
+    DANCE: "game:dance",
+    HIDE_SEEK_START: "game:hide-seek:start",
+    HIDE_SEEK_TICK: "game:hide-seek:tick",
+    HIDE_SEEK_FOUND: "game:hide-seek:found",
+    HIDE_SEEK_TIMEOUT: "game:hide-seek:timeout",
+    HIDE_SEEK_END: "game:hide-seek:end"
+  });
+  var AUDIO_EVENTS = Object.freeze({
+    MUSIC_START: "audio:music:start",
+    MUSIC_STOP: "audio:music:stop",
+    SPEAK: "audio:speak"
+  });
+  var ALL_EVENT_TYPES = Object.freeze([
+    ...Object.values(UI_EVENTS),
+    ...Object.values(ROBOT_EVENTS),
+    ...Object.values(GAME_EVENTS),
+    ...Object.values(AUDIO_EVENTS)
+  ]);
+  var EVENT_TYPE_SET = new Set(ALL_EVENT_TYPES);
+
+  // js/controllers/coordinators/GameFlowCoordinator.js
+  var GameFlowCoordinator = class {
+    #sceneService;
+    #stageView;
+    #hudView;
+    #controlsView;
+    #audioService;
+    #hideContext = { hideSpots: [], occluderIds: [] };
+    constructor({ sceneService, stageView, hudView, controlsView, audioService }) {
+      this.#sceneService = sceneService;
+      this.#stageView = stageView;
+      this.#hudView = hudView;
+      this.#controlsView = controlsView;
+      this.#audioService = audioService;
+    }
+    renderInitialScene(gameState) {
+      this.#hideContext = this.#sceneService.render(gameState.theme);
+      return this.#hideContext;
+    }
+    get hideContext() {
+      return this.#hideContext;
+    }
+    handleThemeChanged(gameState) {
+      this.#hideContext = this.#sceneService.render(gameState.theme);
+      this.#hudView.announce(`Theme changed to ${gameState.theme}.`);
+    }
+    handleMoveChanged(gameState, hooks) {
+      this.#controlsView.setMoveActive(gameState.isMoving);
+      if (gameState.isMoving) {
+        hooks.startMovementLoop();
+      } else {
+        hooks.stopMovementLoop();
+      }
+      hooks.syncMotionState(gameState);
+    }
+    handleDanceChanged(gameState, hooks) {
+      this.#controlsView.setDanceActive(gameState.isDancing);
+      if (gameState.isDancing) {
+        this.#audioService.startMusic();
+        this.#audioService.speak(`${gameState.dance.name} dance.`);
+      } else {
+        this.#audioService.stopMusic();
+      }
+      hooks.syncMotionState(gameState);
+    }
+    handleHideSeekStart(gameState, hooks) {
+      this.#controlsView.setHideSeekActive(true);
+      this.#hudView.renderHideSeek(true, gameState.hideSeek.secondsLeft, gameState.hideSeek.score);
+      this.#hudView.announce("Hide and seek started. Find the robot.");
+      this.#hudView.showToast("Find the robot");
+      this.#audioService.playClick();
+      this.#audioService.speak("Can you find me?");
+      this.#stageView.beginHideSeek(this.#hideContext);
+      hooks.startHideSeekLoop();
+    }
+    handleHideSeekTick(gameState) {
+      this.#hudView.renderHideSeek(true, gameState.hideSeek.secondsLeft, gameState.hideSeek.score);
+    }
+    handleHideSeekFound(gameState) {
+      this.#hudView.showToast(`Found. Score ${gameState.hideSeek.score}`);
+      this.#audioService.playSuccess();
+      this.#audioService.speak("You found me.");
+    }
+    handleHideSeekTimeout() {
+      this.#hudView.showToast("Time is up");
+      this.#audioService.playClick();
+      this.#audioService.speak("Time is up.");
+    }
+    handleHideSeekEnd(gameState, reason, hooks) {
+      this.#controlsView.setHideSeekActive(false);
+      this.#hudView.renderHideSeek(false, gameState.hideSeek.secondsLeft, gameState.hideSeek.score);
+      this.#stageView.endHideSeek();
+      hooks.stopHideSeekLoop();
+      if (reason === "cancel") {
+        this.#hudView.showToast("Hide and seek canceled", 1200);
+        this.#audioService.playClick();
+      }
+    }
+  };
+
+  // js/controllers/coordinators/RobotSyncCoordinator.js
+  var DEFAULT_VISUAL_KEYS = /* @__PURE__ */ new Set(["head", "body", "arms", "legs", "palette", "scale"]);
+  var RobotSyncCoordinator = class {
+    #stageView;
+    #uiSync;
+    #exhaustService;
+    #visualKeys;
+    constructor({ stageView, uiSync, exhaustService, visualKeys = DEFAULT_VISUAL_KEYS }) {
+      this.#stageView = stageView;
+      this.#uiSync = uiSync;
+      this.#exhaustService = exhaustService;
+      this.#visualKeys = visualKeys;
+    }
+    handleRobotChanged(robotState, changed, gameState) {
+      if (this.hasVisualChange(changed)) {
+        this.#stageView.applyRobotChanges(robotState, changed);
+      }
+      this.#uiSync.renderRobotIdentity(robotState, changed);
+      this.syncExhaust(robotState, gameState);
+    }
+    hasVisualChange(changed) {
+      return changed.some((key) => this.#visualKeys.has(key));
+    }
+    syncExhaust(robotState, gameState) {
+      this.#exhaustService.setEnabled(robotState.bodyHasEngine);
+      if (!robotState.bodyHasEngine) {
+        this.#exhaustService.setMode("off");
+        return;
+      }
+      this.#exhaustService.setMode(gameState.isDancing ? "fire" : "smoke");
+    }
+  };
+
+  // js/controllers/coordinators/UiSyncCoordinator.js
+  var UiSyncCoordinator = class {
+    #controlsView;
+    #hudView;
+    #stageView;
+    constructor({ controlsView, hudView, stageView }) {
+      this.#controlsView = controlsView;
+      this.#hudView = hudView;
+      this.#stageView = stageView;
+    }
+    initialize() {
+      this.#callLifecycle("init");
+      this.#callLifecycle("mount");
+    }
+    destroy() {
+      this.#callLifecycle("unmount");
+      this.#callLifecycle("destroy");
+    }
+    renderInitial(robotState, gameState) {
+      this.#stageView.render(robotState);
+      this.#hudView.renderName(robotState.name);
+      this.#hudView.renderEmotion(robotState.emotion);
+      this.#hudView.renderHideSeek(gameState.hideSeek.active, gameState.hideSeek.secondsLeft, gameState.hideSeek.score);
+      this.syncControls(gameState);
+      this.syncMotionState(gameState);
+    }
+    renderRobotIdentity(robotState, changed) {
+      if (changed.includes("name")) {
+        this.#hudView.renderName(robotState.name);
+      }
+      if (changed.includes("emotion")) {
+        this.#hudView.renderEmotion(robotState.emotion);
+      }
+    }
+    syncControls(gameState) {
+      this.#controlsView.setMoveActive(gameState.isMoving);
+      this.#controlsView.setDanceActive(gameState.isDancing);
+      this.#controlsView.setHideSeekActive(gameState.hideSeek.active);
+    }
+    syncMotionState(gameState) {
+      this.#stageView.setMotionState({
+        isMoving: gameState.isMoving,
+        danceClass: gameState.isDancing ? gameState.dance.cssClass : null
+      });
+    }
+    #callLifecycle(method) {
+      [this.#controlsView, this.#hudView, this.#stageView].forEach((view) => {
+        if (typeof view[method] === "function") {
+          view[method]();
+        }
+      });
+    }
+  };
+
+  // js/controllers/AppController.js
+  var AppController = class {
+    #bus;
+    #robotModel;
+    #gameModel;
+    #audioService;
+    #exhaustService;
+    #stageView;
+    #hudView;
+    #uiSync;
+    #robotSync;
+    #gameFlow;
+    #listeners = [];
+    #latestRobotState = null;
+    #latestGameState = null;
+    #moveInterval = null;
+    #hideSeekInterval = null;
+    constructor(dependencies) {
+      this.#bus = dependencies.bus;
+      this.#robotModel = dependencies.robotModel;
+      this.#gameModel = dependencies.gameModel;
+      this.#audioService = dependencies.audioService;
+      this.#exhaustService = dependencies.exhaustService;
+      this.#stageView = dependencies.stageView;
+      this.#hudView = dependencies.hudView;
+      this.#uiSync = new UiSyncCoordinator({
+        controlsView: dependencies.controlsView,
+        hudView: dependencies.hudView,
+        stageView: dependencies.stageView
+      });
+      this.#robotSync = new RobotSyncCoordinator({
+        stageView: dependencies.stageView,
+        uiSync: this.#uiSync,
+        exhaustService: dependencies.exhaustService
+      });
+      this.#gameFlow = new GameFlowCoordinator({
+        sceneService: dependencies.sceneService,
+        stageView: dependencies.stageView,
+        hudView: dependencies.hudView,
+        controlsView: dependencies.controlsView,
+        audioService: dependencies.audioService
+      });
+    }
+    init() {
+      this.#uiSync.initialize();
+      this.#wireEvents();
+      const gameState = this.#gameModel.snapshot;
+      const robotState = this.#robotModel.snapshot;
+      this.#latestGameState = gameState;
+      this.#latestRobotState = robotState;
+      this.#gameFlow.renderInitialScene(gameState);
+      this.#uiSync.renderInitial(robotState, gameState);
+      this.#robotSync.syncExhaust(robotState, gameState);
+    }
+    destroy() {
+      this.#stopMovementLoop();
+      this.#stopHideSeekLoop();
+      this.#offAll();
+      this.#uiSync.destroy();
+      this.#audioService.destroy();
+      this.#exhaustService.destroy();
+    }
+    #wireEvents() {
+      this.#on(UI_EVENTS.PART_CYCLE, (event) => {
+        this.#audioService.playBoing();
+        this.#robotModel.cyclePart(event.detail.part);
+      });
+      this.#on(UI_EVENTS.NAME_CYCLE, () => {
+        this.#audioService.playClick();
+        this.#robotModel.nextName();
+      });
+      this.#on(UI_EVENTS.EMOTION_CYCLE, () => {
+        this.#audioService.playClick();
+        this.#robotModel.cycleEmotion();
+      });
+      this.#on(UI_EVENTS.HIDE_SEEK_FOUND, () => {
+        this.#gameModel.markHideSeekFound();
+      });
+      this.#on(UI_EVENTS.ACTION, (event) => {
+        this.#handleAction(event.detail.action);
+      });
+      this.#on(ROBOT_EVENTS.CHANGED, (event) => {
+        const state = event.detail.state;
+        const changed = Array.isArray(event.detail.changed) ? event.detail.changed : [];
+        this.#latestRobotState = state;
+        this.#robotSync.handleRobotChanged(state, changed, this.#latestGameState ?? this.#gameModel.snapshot);
+      });
+      this.#on(GAME_EVENTS.THEME, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleThemeChanged(state);
+      });
+      this.#on(GAME_EVENTS.MOVE, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleMoveChanged(state, {
+          startMovementLoop: () => this.#startMovementLoop(),
+          stopMovementLoop: () => this.#stopMovementLoop(),
+          syncMotionState: (nextState) => this.#uiSync.syncMotionState(nextState)
+        });
+        this.#robotSync.syncExhaust(this.#latestRobotState ?? this.#robotModel.snapshot, state);
+      });
+      this.#on(GAME_EVENTS.DANCE, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleDanceChanged(state, {
+          syncMotionState: (nextState) => this.#uiSync.syncMotionState(nextState)
+        });
+        this.#robotSync.syncExhaust(this.#latestRobotState ?? this.#robotModel.snapshot, state);
+      });
+      this.#on(GAME_EVENTS.HIDE_SEEK_START, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleHideSeekStart(state, {
+          startHideSeekLoop: () => this.#startHideSeekLoop()
+        });
+      });
+      this.#on(GAME_EVENTS.HIDE_SEEK_TICK, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleHideSeekTick(state);
+      });
+      this.#on(GAME_EVENTS.HIDE_SEEK_FOUND, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleHideSeekFound(state);
+      });
+      this.#on(GAME_EVENTS.HIDE_SEEK_TIMEOUT, (event) => {
+        this.#latestGameState = event.detail.state;
+        this.#gameFlow.handleHideSeekTimeout();
+      });
+      this.#on(GAME_EVENTS.HIDE_SEEK_END, (event) => {
+        const state = event.detail.state;
+        this.#latestGameState = state;
+        this.#gameFlow.handleHideSeekEnd(state, event.detail.reason, {
+          stopHideSeekLoop: () => this.#stopHideSeekLoop()
+        });
+      });
+    }
+    #handleAction(action) {
+      switch (action) {
+        case "nextTheme":
+          this.#audioService.playSuccess();
+          this.#gameModel.nextTheme();
+          this.#audioService.speak(this.#latestGameState?.theme ?? this.#gameModel.snapshot.theme);
+          break;
+        case "nextPalette":
+          this.#audioService.playSuccess();
+          this.#robotModel.nextPalette();
+          this.#hudView.showToast("Color palette changed", 1200);
+          break;
+        case "nextSize":
+          this.#audioService.playBoing();
+          this.#robotModel.setScalePreset();
+          this.#hudView.showToast("Size changed", 1100);
+          break;
+        case "randomize":
+          this.#audioService.playSuccess();
+          this.#robotModel.randomize();
+          this.#stageView.resetPosition();
+          this.#hudView.showToast("Mixed all parts");
+          this.#audioService.speak("Super mix.");
+          break;
+        case "toggleMove":
+          this.#audioService.playClick();
+          this.#gameModel.toggleMove();
+          break;
+        case "toggleDance":
+          this.#audioService.playClick();
+          this.#gameModel.toggleDance();
+          break;
+        case "toggleHideSeek":
+          if ((this.#latestGameState ?? this.#gameModel.snapshot).hideSeek.active) {
+            this.#gameModel.cancelHideSeek();
+          } else {
+            this.#gameModel.startHideSeek();
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    #startMovementLoop() {
+      this.#stopMovementLoop();
+      this.#stageView.stepMovement();
+      this.#moveInterval = setInterval(() => {
+        this.#stageView.stepMovement();
+      }, MOVE_STEP_MS);
+    }
+    #stopMovementLoop() {
+      if (this.#moveInterval !== null) {
+        clearInterval(this.#moveInterval);
+        this.#moveInterval = null;
+      }
+    }
+    #startHideSeekLoop() {
+      this.#stopHideSeekLoop();
+      this.#hideSeekInterval = setInterval(() => {
+        this.#gameModel.tickHideSeek();
+      }, 1e3);
+    }
+    #stopHideSeekLoop() {
+      if (this.#hideSeekInterval !== null) {
+        clearInterval(this.#hideSeekInterval);
+        this.#hideSeekInterval = null;
+      }
+    }
+    #on(type, handler) {
+      this.#bus.on(type, handler);
+      this.#listeners.push({ type, handler });
+    }
+    #offAll() {
+      this.#listeners.forEach(({ type, handler }) => {
+        this.#bus.off(type, handler);
+      });
+      this.#listeners = [];
+    }
+  };
+
+  // js/core/EventBus.js
+  var EventBus = class {
+    #target;
+    #allowedTypes;
+    constructor(options = {}) {
+      this.#target = new EventTarget();
+      this.#allowedTypes = this.#normalizeAllowedTypes(options.allowedTypes);
+    }
+    on(type, handler, options) {
+      this.#assertKnownType(type);
+      this.#target.addEventListener(type, handler, options);
+    }
+    off(type, handler, options) {
+      this.#assertKnownType(type);
+      this.#target.removeEventListener(type, handler, options);
+    }
+    emit(type, detail = {}) {
+      this.#assertKnownType(type);
+      this.#target.dispatchEvent(new CustomEvent(type, { detail }));
+    }
+    #normalizeAllowedTypes(allowedTypes) {
+      if (!allowedTypes) {
+        return null;
+      }
+      const normalized = Array.isArray(allowedTypes) ? allowedTypes : Array.from(allowedTypes);
+      return new Set(normalized);
+    }
+    #assertKnownType(type) {
+      if (typeof type !== "string" || type.length === 0) {
+        throw new Error("Event type must be a non-empty string.");
+      }
+      if (!this.#allowedTypes || this.#allowedTypes.has(type)) {
+        return;
+      }
+      throw new Error(`Unknown event type "${type}". Add it to js/core/events.js before use.`);
+    }
+  };
 
   // js/domain/GameModel.js
   var GameModel = class {
@@ -140,21 +627,21 @@
     }
     nextTheme() {
       this.#themeIndex = (this.#themeIndex + 1) % THEMES.length;
-      this.#bus.emit("game:theme", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.THEME, { state: this.snapshot });
     }
     toggleMove() {
       this.#isMoving = !this.#isMoving;
-      this.#bus.emit("game:move", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.MOVE, { state: this.snapshot });
     }
     toggleDance() {
       if (this.#isDancing) {
         this.#isDancing = false;
-        this.#bus.emit("game:dance", { state: this.snapshot });
+        this.#bus.emit(GAME_EVENTS.DANCE, { state: this.snapshot });
         return;
       }
       this.#danceIndex = (this.#danceIndex + 1) % DANCE_STYLES.length;
       this.#isDancing = true;
-      this.#bus.emit("game:dance", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.DANCE, { state: this.snapshot });
     }
     startHideSeek() {
       if (this.#hideSeek.active) {
@@ -165,7 +652,7 @@
         active: true,
         secondsLeft: HIDE_SEEK_SECONDS
       };
-      this.#bus.emit("game:hide-seek:start", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_START, { state: this.snapshot });
       return true;
     }
     cancelHideSeek() {
@@ -177,7 +664,7 @@
         active: false,
         secondsLeft: HIDE_SEEK_SECONDS
       };
-      this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "cancel" });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "cancel" });
       return true;
     }
     markHideSeekFound() {
@@ -190,8 +677,8 @@
         secondsLeft: HIDE_SEEK_SECONDS,
         score: this.#hideSeek.score + 1
       };
-      this.#bus.emit("game:hide-seek:found", { state: this.snapshot });
-      this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "found" });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_FOUND, { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "found" });
       return true;
     }
     tickHideSeek() {
@@ -203,15 +690,15 @@
         ...this.#hideSeek,
         secondsLeft
       };
-      this.#bus.emit("game:hide-seek:tick", { state: this.snapshot });
+      this.#bus.emit(GAME_EVENTS.HIDE_SEEK_TICK, { state: this.snapshot });
       if (secondsLeft <= 0) {
         this.#hideSeek = {
           ...this.#hideSeek,
           active: false,
           secondsLeft: HIDE_SEEK_SECONDS
         };
-        this.#bus.emit("game:hide-seek:timeout", { state: this.snapshot });
-        this.#bus.emit("game:hide-seek:end", { state: this.snapshot, reason: "timeout" });
+        this.#bus.emit(GAME_EVENTS.HIDE_SEEK_TIMEOUT, { state: this.snapshot });
+        this.#bus.emit(GAME_EVENTS.HIDE_SEEK_END, { state: this.snapshot, reason: "timeout" });
       }
     }
   };
@@ -305,7 +792,7 @@
       return Boolean(PART_CATALOG.bodies[this.#bodyIndex].engine);
     }
     #emit(changed) {
-      this.#bus.emit("robot:changed", {
+      this.#bus.emit(ROBOT_EVENTS.CHANGED, {
         changed,
         state: this.snapshot
       });
@@ -316,6 +803,9 @@
   var AudioService = class {
     #contextFactory;
     #speech;
+    #speechLang = "en-US";
+    #selectedVoiceName = null;
+    #selectedVoiceLang = null;
     #context = null;
     #masterGain = null;
     #musicTimer = null;
@@ -332,6 +822,9 @@
         return Ctx ? new Ctx() : null;
       });
       this.#speech = options.speech ?? (typeof window !== "undefined" ? window.speechSynthesis : null);
+      if (typeof options.speechLang === "string" && options.speechLang.trim()) {
+        this.#speechLang = options.speechLang;
+      }
     }
     playClick() {
       this.#playTone({
@@ -413,6 +906,11 @@
       }
       this.#speech.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = this.#speechLang;
+      const voice = this.#pickSpeechVoice();
+      if (voice) {
+        utterance.voice = voice;
+      }
       utterance.rate = 0.92;
       utterance.pitch = 1.05;
       utterance.volume = 0.55;
@@ -578,6 +1076,64 @@
       osc.start(time);
       osc.stop(time + 0.2);
     }
+    #pickSpeechVoice() {
+      if (!this.#speech || typeof this.#speech.getVoices !== "function") {
+        return null;
+      }
+      let voices;
+      try {
+        voices = this.#speech.getVoices() ?? [];
+      } catch {
+        return null;
+      }
+      if (!Array.isArray(voices) || voices.length === 0) {
+        this.#selectedVoiceName = null;
+        this.#selectedVoiceLang = null;
+        return null;
+      }
+      if (this.#selectedVoiceName) {
+        const cached = voices.find((voice) => voice.name === this.#selectedVoiceName && String(voice.lang ?? "").toLowerCase() === this.#selectedVoiceLang);
+        if (cached) {
+          return cached;
+        }
+      }
+      const englishVoices = voices.filter((voice) => String(voice.lang ?? "").toLowerCase().startsWith("en"));
+      if (englishVoices.length === 0) {
+        this.#selectedVoiceName = null;
+        this.#selectedVoiceLang = null;
+        return null;
+      }
+      const ranked = [...englishVoices].sort((left, right) => {
+        const leftRank = this.#voiceRank(left.lang);
+        const rightRank = this.#voiceRank(right.lang);
+        if (leftRank !== rightRank) {
+          return leftRank - rightRank;
+        }
+        const leftLocal = left.localService ? 0 : 1;
+        const rightLocal = right.localService ? 0 : 1;
+        if (leftLocal !== rightLocal) {
+          return leftLocal - rightLocal;
+        }
+        return String(left.name ?? "").localeCompare(String(right.name ?? ""));
+      });
+      const selected = ranked[0];
+      this.#selectedVoiceName = selected.name;
+      this.#selectedVoiceLang = String(selected.lang ?? "").toLowerCase();
+      return selected;
+    }
+    #voiceRank(lang) {
+      const normalized = String(lang ?? "").toLowerCase();
+      if (normalized === "en-us") {
+        return 0;
+      }
+      if (normalized.startsWith("en-us-")) {
+        return 1;
+      }
+      if (normalized === "en-gb") {
+        return 2;
+      }
+      return 3;
+    }
     #schedule(callback, delayMs) {
       setTimeout(callback, delayMs);
     }
@@ -704,161 +1260,178 @@
     }
   };
 
+  // js/services/scene/themes.js
+  var SCENE_THEMES = Object.freeze({
+    Factory: {
+      accents: [
+        { x: 15, y: 20, w: 120, h: 120, color: "rgba(148,163,184,0.28)", shape: "square" },
+        { x: 82, y: 25, w: 100, h: 100, color: "rgba(250,204,21,0.2)", shape: "circle" },
+        { x: 50, y: 78, w: 360, h: 24, color: "rgba(148,163,184,0.22)", shape: "line" }
+      ],
+      occluders: [
+        { id: "crate-left", type: "crate", x: 18, y: 72, w: 130, h: 130 },
+        { id: "crate-right", type: "crate", x: 81, y: 70, w: 120, h: 120 },
+        { id: "pipe", type: "pipe", x: 52, y: 68, w: 190, h: 170 }
+      ],
+      hideSpots: [
+        { x: -245, y: 90, occluderId: "crate-left", peek: "right" },
+        { x: 240, y: 82, occluderId: "crate-right", peek: "left" },
+        { x: 0, y: 80, occluderId: "pipe", peek: "up" }
+      ]
+    },
+    Space: {
+      accents: [
+        { x: 20, y: 22, w: 5, h: 5, color: "rgba(255,255,255,0.88)", shape: "circle" },
+        { x: 43, y: 32, w: 4, h: 4, color: "rgba(255,255,255,0.75)", shape: "circle" },
+        { x: 77, y: 18, w: 7, h: 7, color: "rgba(255,255,255,0.9)", shape: "circle" },
+        { x: 67, y: 23, w: 130, h: 130, color: "rgba(99,102,241,0.2)", shape: "circle" }
+      ],
+      occluders: [
+        { id: "planet-left", type: "planet", x: 15, y: 70, w: 150, h: 150 },
+        { id: "planet-right", type: "planet", x: 84, y: 68, w: 170, h: 170 },
+        { id: "cloud", type: "nebula", x: 48, y: 75, w: 260, h: 120 }
+      ],
+      hideSpots: [
+        { x: -248, y: 84, occluderId: "planet-left", peek: "right" },
+        { x: 245, y: 86, occluderId: "planet-right", peek: "left" },
+        { x: -20, y: 92, occluderId: "cloud", peek: "up" }
+      ]
+    },
+    Moon: {
+      accents: [
+        { x: 80, y: 18, w: 140, h: 140, color: "rgba(255,255,255,0.24)", shape: "circle" },
+        { x: 30, y: 80, w: 270, h: 38, color: "rgba(148,163,184,0.28)", shape: "line" }
+      ],
+      occluders: [
+        { id: "rock-left", type: "rock", x: 20, y: 73, w: 150, h: 105 },
+        { id: "rock-right", type: "rock", x: 80, y: 71, w: 170, h: 118 },
+        { id: "ridge", type: "ridge", x: 50, y: 79, w: 340, h: 120 }
+      ],
+      hideSpots: [
+        { x: -235, y: 88, occluderId: "rock-left", peek: "right" },
+        { x: 225, y: 85, occluderId: "rock-right", peek: "left" },
+        { x: 6, y: 92, occluderId: "ridge", peek: "up" }
+      ]
+    },
+    Jungle: {
+      accents: [
+        { x: 11, y: 22, w: 70, h: 220, color: "rgba(34,197,94,0.2)", shape: "line" },
+        { x: 88, y: 22, w: 65, h: 220, color: "rgba(21,128,61,0.2)", shape: "line" },
+        { x: 47, y: 70, w: 170, h: 170, color: "rgba(187,247,208,0.2)", shape: "circle" }
+      ],
+      occluders: [
+        { id: "tree-left", type: "tree", x: 14, y: 66, w: 165, h: 220 },
+        { id: "tree-right", type: "tree", x: 83, y: 67, w: 175, h: 220 },
+        { id: "bush", type: "bush", x: 50, y: 79, w: 330, h: 130 }
+      ],
+      hideSpots: [
+        { x: -246, y: 72, occluderId: "tree-left", peek: "right" },
+        { x: 240, y: 73, occluderId: "tree-right", peek: "left" },
+        { x: 0, y: 95, occluderId: "bush", peek: "up" }
+      ]
+    },
+    Underwater: {
+      accents: [
+        { x: 20, y: 25, w: 60, h: 60, color: "rgba(255,255,255,0.2)", shape: "circle" },
+        { x: 42, y: 48, w: 50, h: 50, color: "rgba(255,255,255,0.18)", shape: "circle" },
+        { x: 74, y: 30, w: 68, h: 68, color: "rgba(255,255,255,0.22)", shape: "circle" }
+      ],
+      occluders: [
+        { id: "reef-left", type: "reef", x: 17, y: 72, w: 170, h: 150 },
+        { id: "reef-right", type: "reef", x: 80, y: 72, w: 180, h: 150 },
+        { id: "seaweed", type: "seaweed", x: 52, y: 74, w: 320, h: 170 }
+      ],
+      hideSpots: [
+        { x: -238, y: 94, occluderId: "reef-left", peek: "right" },
+        { x: 236, y: 96, occluderId: "reef-right", peek: "left" },
+        { x: -5, y: 88, occluderId: "seaweed", peek: "up" }
+      ]
+    },
+    Candy: {
+      accents: [
+        { x: 17, y: 23, w: 62, h: 62, color: "rgba(251,113,133,0.27)", shape: "circle" },
+        { x: 78, y: 20, w: 58, h: 58, color: "rgba(217,70,239,0.25)", shape: "square" },
+        { x: 50, y: 69, w: 180, h: 24, color: "rgba(252,165,165,0.26)", shape: "line" }
+      ],
+      occluders: [
+        { id: "gumdrop-left", type: "gumdrop", x: 20, y: 74, w: 170, h: 125 },
+        { id: "gumdrop-right", type: "gumdrop", x: 82, y: 74, w: 185, h: 125 },
+        { id: "hill", type: "candies", x: 50, y: 77, w: 340, h: 140 }
+      ],
+      hideSpots: [
+        { x: -236, y: 92, occluderId: "gumdrop-left", peek: "right" },
+        { x: 240, y: 91, occluderId: "gumdrop-right", peek: "left" },
+        { x: 10, y: 94, occluderId: "hill", peek: "up" }
+      ]
+    },
+    Arctic: {
+      accents: [
+        { x: 18, y: 20, w: 12, h: 12, color: "rgba(255,255,255,0.78)", shape: "circle" },
+        { x: 41, y: 30, w: 10, h: 10, color: "rgba(255,255,255,0.68)", shape: "circle" },
+        { x: 78, y: 26, w: 12, h: 12, color: "rgba(255,255,255,0.75)", shape: "circle" }
+      ],
+      occluders: [
+        { id: "ice-left", type: "ice", x: 16, y: 70, w: 175, h: 150 },
+        { id: "ice-right", type: "ice", x: 84, y: 70, w: 170, h: 145 },
+        { id: "snowbank", type: "snowbank", x: 52, y: 79, w: 350, h: 120 }
+      ],
+      hideSpots: [
+        { x: -239, y: 85, occluderId: "ice-left", peek: "right" },
+        { x: 238, y: 87, occluderId: "ice-right", peek: "left" },
+        { x: 0, y: 96, occluderId: "snowbank", peek: "up" }
+      ]
+    },
+    Sunset: {
+      accents: [
+        { x: 51, y: 19, w: 100, h: 100, color: "rgba(251,191,36,0.35)", shape: "circle" },
+        { x: 50, y: 73, w: 300, h: 20, color: "rgba(255,255,255,0.24)", shape: "line" }
+      ],
+      occluders: [
+        { id: "hill-left", type: "hill", x: 19, y: 76, w: 220, h: 160 },
+        { id: "hill-right", type: "hill", x: 81, y: 76, w: 220, h: 160 },
+        { id: "cloud", type: "cloud", x: 50, y: 44, w: 260, h: 100 }
+      ],
+      hideSpots: [
+        { x: -232, y: 95, occluderId: "hill-left", peek: "right" },
+        { x: 233, y: 95, occluderId: "hill-right", peek: "left" },
+        { x: 0, y: -40, occluderId: "cloud", peek: "down" }
+      ]
+    }
+  });
+
   // js/services/SceneService.js
-  var SceneService = class _SceneService {
+  var FALLBACK_THEME = "Factory";
+  var SceneService = class {
     #background;
     #foreground;
-    static #themes = {
-      Factory: {
-        accents: [
-          { x: 15, y: 20, w: 120, h: 120, color: "rgba(148,163,184,0.28)", shape: "square" },
-          { x: 82, y: 25, w: 100, h: 100, color: "rgba(250,204,21,0.2)", shape: "circle" },
-          { x: 50, y: 78, w: 360, h: 24, color: "rgba(148,163,184,0.22)", shape: "line" }
-        ],
-        occluders: [
-          { id: "crate-left", type: "crate", x: 18, y: 72, w: 130, h: 130 },
-          { id: "crate-right", type: "crate", x: 81, y: 70, w: 120, h: 120 },
-          { id: "pipe", type: "pipe", x: 52, y: 68, w: 190, h: 170 }
-        ],
-        hideSpots: [
-          { x: -245, y: 90, occluderId: "crate-left", peek: "right" },
-          { x: 240, y: 82, occluderId: "crate-right", peek: "left" },
-          { x: 0, y: 80, occluderId: "pipe", peek: "up" }
-        ]
-      },
-      Space: {
-        accents: [
-          { x: 20, y: 22, w: 5, h: 5, color: "rgba(255,255,255,0.88)", shape: "circle" },
-          { x: 43, y: 32, w: 4, h: 4, color: "rgba(255,255,255,0.75)", shape: "circle" },
-          { x: 77, y: 18, w: 7, h: 7, color: "rgba(255,255,255,0.9)", shape: "circle" },
-          { x: 67, y: 23, w: 130, h: 130, color: "rgba(99,102,241,0.2)", shape: "circle" }
-        ],
-        occluders: [
-          { id: "planet-left", type: "planet", x: 15, y: 70, w: 150, h: 150 },
-          { id: "planet-right", type: "planet", x: 84, y: 68, w: 170, h: 170 },
-          { id: "cloud", type: "nebula", x: 48, y: 75, w: 260, h: 120 }
-        ],
-        hideSpots: [
-          { x: -248, y: 84, occluderId: "planet-left", peek: "right" },
-          { x: 245, y: 86, occluderId: "planet-right", peek: "left" },
-          { x: -20, y: 92, occluderId: "cloud", peek: "up" }
-        ]
-      },
-      Moon: {
-        accents: [
-          { x: 80, y: 18, w: 140, h: 140, color: "rgba(255,255,255,0.24)", shape: "circle" },
-          { x: 30, y: 80, w: 270, h: 38, color: "rgba(148,163,184,0.28)", shape: "line" }
-        ],
-        occluders: [
-          { id: "rock-left", type: "rock", x: 20, y: 73, w: 150, h: 105 },
-          { id: "rock-right", type: "rock", x: 80, y: 71, w: 170, h: 118 },
-          { id: "ridge", type: "ridge", x: 50, y: 79, w: 340, h: 120 }
-        ],
-        hideSpots: [
-          { x: -235, y: 88, occluderId: "rock-left", peek: "right" },
-          { x: 225, y: 85, occluderId: "rock-right", peek: "left" },
-          { x: 6, y: 92, occluderId: "ridge", peek: "up" }
-        ]
-      },
-      Jungle: {
-        accents: [
-          { x: 11, y: 22, w: 70, h: 220, color: "rgba(34,197,94,0.2)", shape: "line" },
-          { x: 88, y: 22, w: 65, h: 220, color: "rgba(21,128,61,0.2)", shape: "line" },
-          { x: 47, y: 70, w: 170, h: 170, color: "rgba(187,247,208,0.2)", shape: "circle" }
-        ],
-        occluders: [
-          { id: "tree-left", type: "tree", x: 14, y: 66, w: 165, h: 220 },
-          { id: "tree-right", type: "tree", x: 83, y: 67, w: 175, h: 220 },
-          { id: "bush", type: "bush", x: 50, y: 79, w: 330, h: 130 }
-        ],
-        hideSpots: [
-          { x: -246, y: 72, occluderId: "tree-left", peek: "right" },
-          { x: 240, y: 73, occluderId: "tree-right", peek: "left" },
-          { x: 0, y: 95, occluderId: "bush", peek: "up" }
-        ]
-      },
-      Underwater: {
-        accents: [
-          { x: 20, y: 25, w: 60, h: 60, color: "rgba(255,255,255,0.2)", shape: "circle" },
-          { x: 42, y: 48, w: 50, h: 50, color: "rgba(255,255,255,0.18)", shape: "circle" },
-          { x: 74, y: 30, w: 68, h: 68, color: "rgba(255,255,255,0.22)", shape: "circle" }
-        ],
-        occluders: [
-          { id: "reef-left", type: "reef", x: 17, y: 72, w: 170, h: 150 },
-          { id: "reef-right", type: "reef", x: 80, y: 72, w: 180, h: 150 },
-          { id: "seaweed", type: "seaweed", x: 52, y: 74, w: 320, h: 170 }
-        ],
-        hideSpots: [
-          { x: -238, y: 94, occluderId: "reef-left", peek: "right" },
-          { x: 236, y: 96, occluderId: "reef-right", peek: "left" },
-          { x: -5, y: 88, occluderId: "seaweed", peek: "up" }
-        ]
-      },
-      Candy: {
-        accents: [
-          { x: 17, y: 23, w: 62, h: 62, color: "rgba(251,113,133,0.27)", shape: "circle" },
-          { x: 78, y: 20, w: 58, h: 58, color: "rgba(217,70,239,0.25)", shape: "square" },
-          { x: 50, y: 69, w: 180, h: 24, color: "rgba(252,165,165,0.26)", shape: "line" }
-        ],
-        occluders: [
-          { id: "gumdrop-left", type: "gumdrop", x: 20, y: 74, w: 170, h: 125 },
-          { id: "gumdrop-right", type: "gumdrop", x: 82, y: 74, w: 185, h: 125 },
-          { id: "hill", type: "candies", x: 50, y: 77, w: 340, h: 140 }
-        ],
-        hideSpots: [
-          { x: -236, y: 92, occluderId: "gumdrop-left", peek: "right" },
-          { x: 240, y: 91, occluderId: "gumdrop-right", peek: "left" },
-          { x: 10, y: 94, occluderId: "hill", peek: "up" }
-        ]
-      },
-      Arctic: {
-        accents: [
-          { x: 18, y: 20, w: 12, h: 12, color: "rgba(255,255,255,0.78)", shape: "circle" },
-          { x: 41, y: 30, w: 10, h: 10, color: "rgba(255,255,255,0.68)", shape: "circle" },
-          { x: 78, y: 26, w: 12, h: 12, color: "rgba(255,255,255,0.75)", shape: "circle" }
-        ],
-        occluders: [
-          { id: "ice-left", type: "ice", x: 16, y: 70, w: 175, h: 150 },
-          { id: "ice-right", type: "ice", x: 84, y: 70, w: 170, h: 145 },
-          { id: "snowbank", type: "snowbank", x: 52, y: 79, w: 350, h: 120 }
-        ],
-        hideSpots: [
-          { x: -239, y: 85, occluderId: "ice-left", peek: "right" },
-          { x: 238, y: 87, occluderId: "ice-right", peek: "left" },
-          { x: 0, y: 96, occluderId: "snowbank", peek: "up" }
-        ]
-      },
-      Sunset: {
-        accents: [
-          { x: 51, y: 19, w: 100, h: 100, color: "rgba(251,191,36,0.35)", shape: "circle" },
-          { x: 50, y: 73, w: 300, h: 20, color: "rgba(255,255,255,0.24)", shape: "line" }
-        ],
-        occluders: [
-          { id: "hill-left", type: "hill", x: 19, y: 76, w: 220, h: 160 },
-          { id: "hill-right", type: "hill", x: 81, y: 76, w: 220, h: 160 },
-          { id: "cloud", type: "cloud", x: 50, y: 44, w: 260, h: 100 }
-        ],
-        hideSpots: [
-          { x: -232, y: 95, occluderId: "hill-left", peek: "right" },
-          { x: 233, y: 95, occluderId: "hill-right", peek: "left" },
-          { x: 0, y: -40, occluderId: "cloud", peek: "down" }
-        ]
-      }
-    };
     constructor(backgroundContainer, foregroundContainer) {
       this.#background = backgroundContainer;
       this.#foreground = foregroundContainer;
     }
     render(themeName) {
-      const selectedThemeName = _SceneService.#themes[themeName] ? themeName : "Factory";
-      const theme = _SceneService.#themes[selectedThemeName];
+      const selectedThemeName = SCENE_THEMES[themeName] ? themeName : FALLBACK_THEME;
+      const theme = SCENE_THEMES[selectedThemeName];
       const key = selectedThemeName.toLowerCase();
+      this.#setThemeClasses(key);
+      this.#clearLayers();
+      this.#renderAccents(theme.accents);
+      const occluderIds = this.#renderOccluders(theme.occluders, key);
+      const hideSpots = this.#mapHideSpots(theme.hideSpots, key);
+      return {
+        hideSpots,
+        occluderIds
+      };
+    }
+    #setThemeClasses(key) {
       this.#background.className = `scene-layer scene-background scene-theme-${key}`;
       this.#foreground.className = `scene-layer scene-foreground scene-theme-${key}`;
+    }
+    #clearLayers() {
       this.#background.innerHTML = "";
       this.#foreground.innerHTML = "";
-      const occluderIds = [];
-      theme.accents.forEach((accent) => {
+    }
+    #renderAccents(accents) {
+      accents.forEach((accent) => {
         const node = document.createElement("div");
         node.className = `scene-accent ${accent.shape}`;
         node.style.left = `${accent.x}%`;
@@ -869,7 +1442,10 @@
         node.style.transform = "translate(-50%, -50%)";
         this.#background.appendChild(node);
       });
-      theme.occluders.forEach((occluder) => {
+    }
+    #renderOccluders(occluders, key) {
+      const occluderIds = [];
+      occluders.forEach((occluder) => {
         const node = document.createElement("div");
         node.className = `scene-occluder scene-occluder-${occluder.type}`;
         node.style.left = `${occluder.x}%`;
@@ -882,254 +1458,15 @@
         occluderIds.push(occluderNodeId);
         this.#foreground.appendChild(node);
       });
-      const hideSpots = theme.hideSpots.map((spot) => ({
+      return occluderIds;
+    }
+    #mapHideSpots(hideSpots, key) {
+      return hideSpots.map((spot) => ({
         x: spot.x,
         y: spot.y,
         peek: spot.peek,
         occluderId: `scene-occluder-${key}-${spot.occluderId}`
       }));
-      return {
-        hideSpots,
-        occluderIds
-      };
-    }
-  };
-
-  // js/controllers/AppController.js
-  var AppController = class {
-    #bus;
-    #robotModel;
-    #gameModel;
-    #sceneService;
-    #exhaustService;
-    #audioService;
-    #controlsView;
-    #hudView;
-    #stageView;
-    #moveInterval = null;
-    #hideSeekInterval = null;
-    #currentHideContext = { hideSpots: [], occluderIds: [] };
-    constructor(dependencies) {
-      this.#bus = dependencies.bus;
-      this.#robotModel = dependencies.robotModel;
-      this.#gameModel = dependencies.gameModel;
-      this.#sceneService = dependencies.sceneService;
-      this.#exhaustService = dependencies.exhaustService;
-      this.#audioService = dependencies.audioService;
-      this.#controlsView = dependencies.controlsView;
-      this.#hudView = dependencies.hudView;
-      this.#stageView = dependencies.stageView;
-    }
-    init() {
-      this.#controlsView.init();
-      this.#hudView.init();
-      this.#stageView.init();
-      this.#wireEvents();
-      const gameState = this.#gameModel.snapshot;
-      const robotState = this.#robotModel.snapshot;
-      this.#currentHideContext = this.#sceneService.render(gameState.theme);
-      this.#stageView.render(robotState);
-      this.#hudView.renderName(robotState.name);
-      this.#hudView.renderEmotion(robotState.emotion);
-      this.#hudView.renderHideSeek(false, HIDE_SEEK_SECONDS, gameState.hideSeek.score);
-      this.#syncControls();
-      this.#syncExhaust();
-      this.#syncMotionState();
-    }
-    destroy() {
-      this.#stopMovementLoop();
-      this.#stopHideSeekLoop();
-      this.#stageView.destroy();
-      this.#audioService.destroy();
-      this.#exhaustService.destroy();
-    }
-    #wireEvents() {
-      this.#bus.on("ui:part-cycle", (event) => {
-        this.#audioService.playBoing();
-        this.#robotModel.cyclePart(event.detail.part);
-      });
-      this.#bus.on("ui:name-cycle", () => {
-        this.#audioService.playClick();
-        this.#robotModel.nextName();
-      });
-      this.#bus.on("ui:emotion-cycle", () => {
-        this.#audioService.playClick();
-        this.#robotModel.cycleEmotion();
-      });
-      this.#bus.on("ui:hide-seek-found", () => {
-        this.#gameModel.markHideSeekFound();
-      });
-      this.#bus.on("ui:action", (event) => {
-        this.#handleAction(event.detail.action);
-      });
-      this.#bus.on("robot:changed", (event) => {
-        const state = event.detail.state;
-        const changed = event.detail.changed;
-        this.#stageView.render(state);
-        if (changed.includes("name")) {
-          this.#hudView.renderName(state.name);
-        }
-        if (changed.includes("emotion")) {
-          this.#hudView.renderEmotion(state.emotion);
-        }
-        this.#syncExhaust();
-      });
-      this.#bus.on("game:theme", (event) => {
-        const state = event.detail.state;
-        this.#currentHideContext = this.#sceneService.render(state.theme);
-        this.#hudView.announce(`Theme changed to ${state.theme}.`);
-      });
-      this.#bus.on("game:move", (event) => {
-        const state = event.detail.state;
-        this.#controlsView.setMoveActive(state.isMoving);
-        if (state.isMoving) {
-          this.#startMovementLoop();
-        } else {
-          this.#stopMovementLoop();
-        }
-        this.#syncMotionState();
-        this.#syncExhaust();
-      });
-      this.#bus.on("game:dance", (event) => {
-        const state = event.detail.state;
-        this.#controlsView.setDanceActive(state.isDancing);
-        if (state.isDancing) {
-          this.#audioService.startMusic();
-          this.#audioService.speak(`${state.dance.name} dance.`);
-        } else {
-          this.#audioService.stopMusic();
-        }
-        this.#syncMotionState();
-        this.#syncExhaust();
-      });
-      this.#bus.on("game:hide-seek:start", (event) => {
-        const state = event.detail.state;
-        this.#controlsView.setHideSeekActive(true);
-        this.#hudView.renderHideSeek(true, state.hideSeek.secondsLeft, state.hideSeek.score);
-        this.#hudView.announce("Hide and seek started. Find the robot.");
-        this.#hudView.showToast("Find the robot");
-        this.#audioService.playClick();
-        this.#audioService.speak("Can you find me?");
-        this.#stageView.beginHideSeek(this.#currentHideContext);
-        this.#startHideSeekLoop();
-      });
-      this.#bus.on("game:hide-seek:tick", (event) => {
-        const state = event.detail.state;
-        this.#hudView.renderHideSeek(true, state.hideSeek.secondsLeft, state.hideSeek.score);
-      });
-      this.#bus.on("game:hide-seek:found", (event) => {
-        const state = event.detail.state;
-        this.#hudView.showToast(`Found. Score ${state.hideSeek.score}`);
-        this.#audioService.playSuccess();
-        this.#audioService.speak("You found me.");
-      });
-      this.#bus.on("game:hide-seek:timeout", () => {
-        this.#hudView.showToast("Time is up");
-        this.#audioService.playClick();
-        this.#audioService.speak("Time is up.");
-      });
-      this.#bus.on("game:hide-seek:end", (event) => {
-        const state = event.detail.state;
-        this.#controlsView.setHideSeekActive(false);
-        this.#hudView.renderHideSeek(false, state.hideSeek.secondsLeft, state.hideSeek.score);
-        this.#stageView.endHideSeek();
-        this.#stopHideSeekLoop();
-        if (event.detail.reason === "cancel") {
-          this.#hudView.showToast("Hide and seek canceled", 1200);
-          this.#audioService.playClick();
-        }
-      });
-    }
-    #handleAction(action) {
-      switch (action) {
-        case "nextTheme":
-          this.#audioService.playSuccess();
-          this.#gameModel.nextTheme();
-          this.#audioService.speak(this.#gameModel.snapshot.theme);
-          break;
-        case "nextPalette":
-          this.#audioService.playSuccess();
-          this.#robotModel.nextPalette();
-          this.#hudView.showToast("Color palette changed", 1200);
-          break;
-        case "nextSize":
-          this.#audioService.playBoing();
-          this.#robotModel.setScalePreset();
-          this.#hudView.showToast("Size changed", 1100);
-          break;
-        case "randomize":
-          this.#audioService.playSuccess();
-          this.#robotModel.randomize();
-          this.#stageView.resetPosition();
-          this.#hudView.showToast("Mixed all parts");
-          this.#audioService.speak("Super mix.");
-          break;
-        case "toggleMove":
-          this.#audioService.playClick();
-          this.#gameModel.toggleMove();
-          break;
-        case "toggleDance":
-          this.#audioService.playClick();
-          this.#gameModel.toggleDance();
-          break;
-        case "toggleHideSeek":
-          if (this.#gameModel.snapshot.hideSeek.active) {
-            this.#gameModel.cancelHideSeek();
-          } else {
-            this.#gameModel.startHideSeek();
-          }
-          break;
-        default:
-          break;
-      }
-    }
-    #startMovementLoop() {
-      this.#stopMovementLoop();
-      this.#stageView.stepMovement();
-      this.#moveInterval = setInterval(() => {
-        this.#stageView.stepMovement();
-      }, MOVE_STEP_MS);
-    }
-    #stopMovementLoop() {
-      if (this.#moveInterval !== null) {
-        clearInterval(this.#moveInterval);
-        this.#moveInterval = null;
-      }
-    }
-    #startHideSeekLoop() {
-      this.#stopHideSeekLoop();
-      this.#hideSeekInterval = setInterval(() => {
-        this.#gameModel.tickHideSeek();
-      }, 1e3);
-    }
-    #stopHideSeekLoop() {
-      if (this.#hideSeekInterval !== null) {
-        clearInterval(this.#hideSeekInterval);
-        this.#hideSeekInterval = null;
-      }
-    }
-    #syncControls() {
-      const state = this.#gameModel.snapshot;
-      this.#controlsView.setMoveActive(state.isMoving);
-      this.#controlsView.setDanceActive(state.isDancing);
-      this.#controlsView.setHideSeekActive(state.hideSeek.active);
-    }
-    #syncMotionState() {
-      const state = this.#gameModel.snapshot;
-      this.#stageView.setMotionState({
-        isMoving: state.isMoving,
-        danceClass: state.isDancing ? state.dance.cssClass : null
-      });
-    }
-    #syncExhaust() {
-      const robot = this.#robotModel.snapshot;
-      const game = this.#gameModel.snapshot;
-      this.#exhaustService.setEnabled(robot.bodyHasEngine);
-      if (!robot.bodyHasEngine) {
-        this.#exhaustService.setMode("off");
-        return;
-      }
-      this.#exhaustService.setMode(game.isDancing ? "fire" : "smoke");
     }
   };
 
@@ -1138,12 +1475,64 @@
     #bus;
     #container;
     #buttons = /* @__PURE__ */ new Map();
+    #handlers = /* @__PURE__ */ new Map();
+    #initialized = false;
+    #mounted = false;
     constructor(bus, container) {
       this.#bus = bus;
       this.#container = container;
     }
     init() {
+      if (!this.#initialized) {
+        this.#buildButtons();
+        this.#initialized = true;
+      }
+      this.mount();
+    }
+    mount() {
+      if (this.#mounted) {
+        return;
+      }
+      this.#handlers.forEach((handler, action) => {
+        const button = this.#buttons.get(action);
+        if (button) {
+          button.addEventListener("click", handler);
+        }
+      });
+      this.#mounted = true;
+    }
+    unmount() {
+      if (!this.#mounted) {
+        return;
+      }
+      this.#handlers.forEach((handler, action) => {
+        const button = this.#buttons.get(action);
+        if (button) {
+          button.removeEventListener("click", handler);
+        }
+      });
+      this.#mounted = false;
+    }
+    destroy() {
+      this.unmount();
+      this.#buttons.clear();
+      this.#handlers.clear();
       this.#container.innerHTML = "";
+      this.#initialized = false;
+    }
+    setMoveActive(active) {
+      this.#setActive("toggleMove", active, active ? "Stop" : "Move");
+    }
+    setDanceActive(active) {
+      this.#setActive("toggleDance", active, active ? "Stop" : "Dance");
+    }
+    setHideSeekActive(active) {
+      this.#setActive("toggleHideSeek", active, active ? "Cancel" : "Hide");
+    }
+    #buildButtons() {
+      this.#container.innerHTML = "";
+      this.#buttons.clear();
+      this.#handlers.clear();
       CONTROL_DEFINITIONS.forEach((definition) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -1159,21 +1548,13 @@
         </svg>
         <span class="control-label">${definition.label}</span>
       `;
-        button.addEventListener("click", () => {
-          this.#bus.emit("ui:action", { action: definition.action });
-        });
+        const handler = () => {
+          this.#bus.emit(UI_EVENTS.ACTION, { action: definition.action });
+        };
         this.#buttons.set(definition.action, button);
+        this.#handlers.set(definition.action, handler);
         this.#container.appendChild(button);
       });
-    }
-    setMoveActive(active) {
-      this.#setActive("toggleMove", active, active ? "Stop" : "Move");
-    }
-    setDanceActive(active) {
-      this.#setActive("toggleDance", active, active ? "Stop" : "Dance");
-    }
-    setHideSeekActive(active) {
-      this.#setActive("toggleHideSeek", active, active ? "Cancel" : "Hide");
     }
     #setActive(action, active, labelText) {
       const button = this.#buttons.get(action);
@@ -1202,6 +1583,9 @@
     #live;
     #toastTimer = null;
     #toastHideTimer = null;
+    #mounted = false;
+    #onNameClick;
+    #onEmotionClick;
     constructor(bus, elements) {
       this.#bus = bus;
       this.#nameButton = elements.nameButton;
@@ -1213,14 +1597,35 @@
       this.#score = elements.score;
       this.#toast = elements.toast;
       this.#live = elements.live;
+      this.#onNameClick = () => {
+        this.#bus.emit(UI_EVENTS.NAME_CYCLE);
+      };
+      this.#onEmotionClick = () => {
+        this.#bus.emit(UI_EVENTS.EMOTION_CYCLE);
+      };
     }
     init() {
-      this.#nameButton.addEventListener("click", () => {
-        this.#bus.emit("ui:name-cycle");
-      });
-      this.#emotionButton.addEventListener("click", () => {
-        this.#bus.emit("ui:emotion-cycle");
-      });
+      this.mount();
+    }
+    mount() {
+      if (this.#mounted) {
+        return;
+      }
+      this.#nameButton.addEventListener("click", this.#onNameClick);
+      this.#emotionButton.addEventListener("click", this.#onEmotionClick);
+      this.#mounted = true;
+    }
+    unmount() {
+      if (!this.#mounted) {
+        return;
+      }
+      this.#nameButton.removeEventListener("click", this.#onNameClick);
+      this.#emotionButton.removeEventListener("click", this.#onEmotionClick);
+      this.#mounted = false;
+    }
+    destroy() {
+      this.unmount();
+      this.#clearToastTimers();
     }
     renderName(name) {
       this.#nameText.textContent = name;
@@ -1241,14 +1646,7 @@
       this.#timer.classList.toggle("is-warning", secondsLeft <= 5);
     }
     showToast(message, duration = 1800) {
-      if (this.#toastTimer !== null) {
-        clearTimeout(this.#toastTimer);
-        this.#toastTimer = null;
-      }
-      if (this.#toastHideTimer !== null) {
-        clearTimeout(this.#toastHideTimer);
-        this.#toastHideTimer = null;
-      }
+      this.#clearToastTimers();
       this.#toast.textContent = message;
       this.#toast.classList.remove("is-hidden", "is-leaving");
       this.#toast.classList.add("is-visible");
@@ -1264,9 +1662,20 @@
     announce(text) {
       this.#live.textContent = text;
     }
+    #clearToastTimers() {
+      if (this.#toastTimer !== null) {
+        clearTimeout(this.#toastTimer);
+        this.#toastTimer = null;
+      }
+      if (this.#toastHideTimer !== null) {
+        clearTimeout(this.#toastHideTimer);
+        this.#toastHideTimer = null;
+      }
+    }
   };
 
   // js/ui/StageView.js
+  var VISUAL_KEYS = /* @__PURE__ */ new Set(["head", "body", "arms", "legs", "palette", "scale"]);
   var StageView = class {
     #bus;
     #region;
@@ -1278,13 +1687,30 @@
     #armLeft;
     #armRight;
     #legs;
+    #partNodes;
+    #partClickHandlers = /* @__PURE__ */ new Map();
+    #mounted = false;
     #movePosition = { x: 0, y: 0 };
     #hideSeekActive = false;
     #hideSeekListener = null;
     #hideHintInterval = null;
     #hideHintTimeout = null;
     #activeOccluderId = null;
-    constructor(bus, elements) {
+    #randomIndex = null;
+    #hasRendered = false;
+    #renderedHeadKey = null;
+    #renderedBodyKey = null;
+    #renderedArmsKey = null;
+    #renderedLegsKey = null;
+    #renderedBodyHasEngine = null;
+    #renderedPalette = {
+      head: null,
+      body: null,
+      arms: null,
+      legs: null
+    };
+    #renderedScale = null;
+    constructor(bus, elements, options = {}) {
       this.#bus = bus;
       this.#region = elements.region;
       this.#mover = elements.mover;
@@ -1295,50 +1721,106 @@
       this.#armLeft = elements.armLeft;
       this.#armRight = elements.armRight;
       this.#legs = elements.legs;
+      this.#partNodes = [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legs];
+      if (typeof options.randomIndex === "function") {
+        this.#randomIndex = options.randomIndex;
+      }
     }
     init() {
       this.#mover.style.setProperty("--move-transition-ms", `${MOVE_TRANSITION_MS}ms`);
       this.setMotionState({ isMoving: false, danceClass: null });
-      [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legs].forEach((node) => {
-        node.addEventListener("click", () => {
+      this.mount();
+    }
+    mount() {
+      if (this.#mounted) {
+        return;
+      }
+      this.#partNodes.forEach((node) => {
+        const handler = () => {
           if (this.#hideSeekActive) {
             return;
           }
           const part = node.dataset.part;
-          this.#bus.emit("ui:part-cycle", { part });
-        });
+          this.#bus.emit(UI_EVENTS.PART_CYCLE, { part });
+        };
+        this.#partClickHandlers.set(node, handler);
+        node.addEventListener("click", handler);
       });
+      this.#mounted = true;
+    }
+    unmount() {
+      if (!this.#mounted) {
+        return;
+      }
+      this.#partClickHandlers.forEach((handler, node) => {
+        node.removeEventListener("click", handler);
+      });
+      this.#partClickHandlers.clear();
+      if (this.#hideSeekListener) {
+        this.#mover.removeEventListener("click", this.#hideSeekListener);
+        this.#hideSeekListener = null;
+      }
+      this.#mounted = false;
     }
     render(state) {
-      this.#renderPiece(this.#head, {
-        kind: "head",
-        key: state.head.key,
-        color: state.palette.head
-      });
-      this.#renderPiece(this.#body, {
-        kind: "body",
-        key: state.body.key,
-        color: state.palette.body,
-        isEngine: state.bodyHasEngine
-      });
-      this.#renderPiece(this.#armLeft, {
-        kind: "arm",
-        key: state.arms.key,
-        color: state.palette.arms,
-        mirror: true
-      });
-      this.#renderPiece(this.#armRight, {
-        kind: "arm",
-        key: state.arms.key,
-        color: state.palette.arms,
-        mirror: false
-      });
-      this.#renderPiece(this.#legs, {
-        kind: "legs",
-        key: state.legs.key,
-        color: state.palette.legs
-      });
-      this.setScale(state.scale);
+      this.applyRobotChanges(state, [...VISUAL_KEYS]);
+    }
+    applyRobotChanges(state, changed = []) {
+      const changedSet = new Set((Array.isArray(changed) ? changed : []).filter((key) => VISUAL_KEYS.has(key)));
+      const firstRender = !this.#hasRendered;
+      if (!firstRender && changedSet.size === 0) {
+        return;
+      }
+      const shouldRebuildHead = firstRender || changedSet.has("head");
+      const shouldRebuildBody = firstRender || changedSet.has("body") || this.#renderedBodyHasEngine !== state.bodyHasEngine;
+      const shouldRebuildArms = firstRender || changedSet.has("arms");
+      const shouldRebuildLegs = firstRender || changedSet.has("legs");
+      if (shouldRebuildHead && this.#shouldRenderPiece(this.#renderedHeadKey, state.head.key, firstRender, changedSet, "head")) {
+        this.#renderPiece(this.#head, {
+          kind: "head",
+          key: state.head.key,
+          color: state.palette.head
+        });
+      }
+      if (shouldRebuildBody && this.#shouldRenderBody(state, firstRender, changedSet)) {
+        this.#renderPiece(this.#body, {
+          kind: "body",
+          key: state.body.key,
+          color: state.palette.body,
+          isEngine: state.bodyHasEngine
+        });
+      }
+      if (shouldRebuildArms && this.#shouldRenderPiece(this.#renderedArmsKey, state.arms.key, firstRender, changedSet, "arms")) {
+        this.#renderPiece(this.#armLeft, {
+          kind: "arm",
+          key: state.arms.key,
+          color: state.palette.arms
+        });
+        this.#renderPiece(this.#armRight, {
+          kind: "arm",
+          key: state.arms.key,
+          color: state.palette.arms
+        });
+      }
+      if (shouldRebuildLegs && this.#shouldRenderPiece(this.#renderedLegsKey, state.legs.key, firstRender, changedSet, "legs")) {
+        this.#renderPiece(this.#legs, {
+          kind: "legs",
+          key: state.legs.key,
+          color: state.palette.legs
+        });
+      }
+      if (changedSet.has("palette") && !firstRender) {
+        this.#applyPaletteChanges(state, {
+          head: shouldRebuildHead,
+          body: shouldRebuildBody,
+          arms: shouldRebuildArms,
+          legs: shouldRebuildLegs
+        });
+      }
+      if ((firstRender || changedSet.has("scale")) && this.#renderedScale !== state.scale) {
+        this.setScale(state.scale);
+      }
+      this.#cacheRenderedState(state);
     }
     setScale(scale) {
       this.#assembly.style.transform = `scale(${scale})`;
@@ -1396,7 +1878,7 @@
         if (!this.#hideSeekActive) {
           return;
         }
-        this.#bus.emit("ui:hide-seek-found");
+        this.#bus.emit(UI_EVENTS.HIDE_SEEK_FOUND);
       };
       this.#mover.addEventListener("click", this.#hideSeekListener);
       this.#startHintLoop();
@@ -1431,9 +1913,71 @@
     }
     destroy() {
       this.endHideSeek();
+      this.unmount();
+    }
+    #applyPaletteChanges(state, rebuilt) {
+      if (!rebuilt.head && this.#renderedPalette.head !== state.palette.head && !this.#setPieceColor(this.#head, state.palette.head)) {
+        this.#renderPiece(this.#head, {
+          kind: "head",
+          key: state.head.key,
+          color: state.palette.head
+        });
+      }
+      if (!rebuilt.body && this.#renderedPalette.body !== state.palette.body && !this.#setPieceColor(this.#body, state.palette.body)) {
+        this.#renderPiece(this.#body, {
+          kind: "body",
+          key: state.body.key,
+          color: state.palette.body,
+          isEngine: state.bodyHasEngine
+        });
+      }
+      if (!rebuilt.arms && this.#renderedPalette.arms !== state.palette.arms) {
+        const updatedLeft = this.#setPieceColor(this.#armLeft, state.palette.arms);
+        const updatedRight = this.#setPieceColor(this.#armRight, state.palette.arms);
+        if (!updatedLeft || !updatedRight) {
+          this.#renderPiece(this.#armLeft, {
+            kind: "arm",
+            key: state.arms.key,
+            color: state.palette.arms
+          });
+          this.#renderPiece(this.#armRight, {
+            kind: "arm",
+            key: state.arms.key,
+            color: state.palette.arms
+          });
+        }
+      }
+      if (!rebuilt.legs && this.#renderedPalette.legs !== state.palette.legs && !this.#setPieceColor(this.#legs, state.palette.legs)) {
+        this.#renderPiece(this.#legs, {
+          kind: "legs",
+          key: state.legs.key,
+          color: state.palette.legs
+        });
+      }
+    }
+    #shouldRenderPiece(renderedKey, nextKey, firstRender, changedSet, keyName) {
+      if (firstRender) {
+        return true;
+      }
+      if (renderedKey !== nextKey) {
+        return true;
+      }
+      return changedSet.has(keyName);
+    }
+    #shouldRenderBody(state, firstRender, changedSet) {
+      if (firstRender) {
+        return true;
+      }
+      if (this.#renderedBodyKey !== state.body.key) {
+        return true;
+      }
+      if (this.#renderedBodyHasEngine !== state.bodyHasEngine) {
+        return true;
+      }
+      return changedSet.has("body");
     }
     #renderPiece(targetButton, options) {
-      const { kind, key, color, isEngine = false, mirror = false } = options;
+      const { kind, key, color, isEngine = false } = options;
       const existingExhaust = kind === "body" ? targetButton.querySelector("#exhaust-container") : null;
       targetButton.innerHTML = "";
       targetButton.dataset.key = key;
@@ -1445,9 +1989,6 @@
       piece.style.setProperty("--piece-color", color);
       if (kind === "body" && isEngine) {
         piece.classList.add("robot-body-engine");
-      }
-      if (kind === "arm" && mirror) {
-        piece.classList.add("robot-arm-mirror");
       }
       this.#appendDetail(piece, kind, key);
       targetButton.appendChild(piece);
@@ -1462,6 +2003,29 @@
       const detailSecondary = document.createElement("span");
       detailSecondary.className = `piece-detail-secondary piece-detail-secondary-${kind} piece-detail-secondary-${kind}-${key}`;
       piece.appendChild(detailSecondary);
+    }
+    #setPieceColor(targetButton, color) {
+      const piece = targetButton.querySelector(".robot-piece");
+      if (!piece) {
+        return false;
+      }
+      piece.style.setProperty("--piece-color", color);
+      return true;
+    }
+    #cacheRenderedState(state) {
+      this.#hasRendered = true;
+      this.#renderedHeadKey = state.head.key;
+      this.#renderedBodyKey = state.body.key;
+      this.#renderedArmsKey = state.arms.key;
+      this.#renderedLegsKey = state.legs.key;
+      this.#renderedBodyHasEngine = state.bodyHasEngine;
+      this.#renderedPalette = {
+        head: state.palette.head,
+        body: state.palette.body,
+        arms: state.palette.arms,
+        legs: state.palette.legs
+      };
+      this.#renderedScale = state.scale;
     }
     #startHintLoop() {
       if (this.#hideHintInterval !== null) {
@@ -1484,7 +2048,7 @@
     #pickHideSpot(hideContext) {
       const candidates = hideContext.hideSpots ?? [];
       if (candidates.length > 0) {
-        return candidates[Math.floor(Math.random() * candidates.length)];
+        return candidates[this.#pickRandomIndex(candidates.length)];
       }
       const bounds = this.#computeBounds();
       const fallbackSpots = [
@@ -1492,7 +2056,28 @@
         { x: bounds.maxX - 45, y: bounds.maxY - 10, peek: "left", occluderId: null },
         { x: 0, y: bounds.minY + 15, peek: "up", occluderId: null }
       ];
-      return fallbackSpots[Math.floor(Math.random() * fallbackSpots.length)];
+      return fallbackSpots[this.#pickRandomIndex(fallbackSpots.length)];
+    }
+    #pickRandomIndex(length) {
+      if (length <= 1) {
+        return 0;
+      }
+      if (this.#randomIndex) {
+        const supplied = Number(this.#randomIndex(length));
+        if (Number.isInteger(supplied) && supplied >= 0) {
+          return supplied % length;
+        }
+      }
+      const cryptoApi = globalThis.crypto;
+      if (cryptoApi && typeof cryptoApi.getRandomValues === "function") {
+        const max = Math.floor(4294967296 / length) * length;
+        const values = new Uint32Array(1);
+        do {
+          cryptoApi.getRandomValues(values);
+        } while (values[0] >= max);
+        return values[0] % length;
+      }
+      return Math.floor(Math.random() * length);
     }
     #applyPeekClass(peek) {
       this.#assembly.classList.remove("robot-peek-left", "robot-peek-right", "robot-peek-up", "robot-peek-down");
@@ -1523,7 +2108,7 @@
     return node;
   }
   async function bootstrap() {
-    const bus = new EventBus();
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
     const nameService = new NameService();
     const robotModel = new RobotModel(bus, nameService);
     const gameModel = new GameModel(bus);

@@ -1,0 +1,176 @@
+.robot-hidden {
+  opacity: 0.9;
+}
+
+.robot-hidden.robot-peek-left {
+  clip-path: inset(0 40% 0 0);
+}
+
+.robot-hidden.robot-peek-right {
+  clip-path: inset(0 0 0 40%);
+}
+
+.robot-hidden.robot-peek-up {
+  clip-path: inset(46% 0 0 0);
+}
+
+.robot-hidden.robot-peek-down {
+  clip-path: inset(0 0 46% 0);
+}
+
+.robot-hint {
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.95));
+}
+
+.exhaust-container {
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  width: 64px;
+  height: 54px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.exhaust-particle {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.exhaust-particle-smoke {
+  background: rgba(203, 213, 225, 0.85);
+}
+
+.exhaust-particle-fire {
+  background: rgba(251, 146, 60, 0.95);
+}
+
+.scene-layer::before,
+.scene-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene-background {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 72%);
+}
+
+.scene-foreground {
+  pointer-events: none;
+}
+
+.scene-theme-factory { background: linear-gradient(180deg, #0f172a, #24344d); }
+.scene-theme-space { background: radial-gradient(circle at top, #312e81 0%, #0b1020 72%); }
+.scene-theme-moon { background: linear-gradient(180deg, #111827, #1f2937); }
+.scene-theme-jungle { background: linear-gradient(180deg, #166534, #065f46); }
+.scene-theme-underwater { background: linear-gradient(180deg, #0ea5e9, #1e40af); }
+.scene-theme-candy { background: linear-gradient(180deg, #fbcfe8, #f9a8d4); }
+.scene-theme-arctic { background: linear-gradient(180deg, #dbeafe, #bfdbfe); }
+.scene-theme-sunset { background: linear-gradient(180deg, #fb923c, #db2777, #312e81); }
+
+.scene-accent {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.36;
+  filter: blur(0.2px);
+}
+
+.scene-accent.square { border-radius: 8px; }
+.scene-accent.line { border-radius: 999px; }
+
+.scene-occluder {
+  position: absolute;
+  pointer-events: none;
+  z-index: var(--z-scene-foreground, 8);
+}
+
+.scene-occluder.is-occluding {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+.scene-occluder-crate {
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(100, 116, 139, 0.95), rgba(71, 85, 105, 0.96));
+  border: 3px solid rgba(226, 232, 240, 0.25);
+}
+
+.scene-occluder-pipe {
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.85), rgba(100, 116, 139, 0.95));
+}
+
+.scene-occluder-planet {
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(99, 102, 241, 0.9));
+}
+
+.scene-occluder-nebula {
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.5), rgba(30, 41, 59, 0.1));
+}
+
+.scene-occluder-rock {
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.85), rgba(51, 65, 85, 0.95));
+}
+
+.scene-occluder-ridge {
+  border-radius: 50% 50% 10% 10%;
+  background: linear-gradient(180deg, rgba(100, 116, 139, 0.7), rgba(51, 65, 85, 0.9));
+}
+
+.scene-occluder-tree {
+  border-radius: 44% 44% 18% 18%;
+  background: radial-gradient(circle at 45% 26%, rgba(187, 247, 208, 0.4), rgba(22, 163, 74, 0.95));
+}
+
+.scene-occluder-bush {
+  border-radius: 44px;
+  background: linear-gradient(180deg, rgba(74, 222, 128, 0.78), rgba(22, 163, 74, 0.95));
+}
+
+.scene-occluder-reef {
+  border-radius: 46% 46% 24% 24%;
+  background: linear-gradient(180deg, rgba(244, 114, 182, 0.55), rgba(217, 70, 239, 0.75));
+}
+
+.scene-occluder-seaweed {
+  border-radius: 40px;
+  background: repeating-linear-gradient(90deg, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.8) 26px, rgba(5, 150, 105, 0.88) 26px, rgba(5, 150, 105, 0.88) 52px);
+}
+
+.scene-occluder-gumdrop {
+  border-radius: 999px 999px 30px 30px;
+  background: linear-gradient(180deg, rgba(251, 207, 232, 0.95), rgba(244, 114, 182, 0.9));
+}
+
+.scene-occluder-candies {
+  border-radius: 42px;
+  background: linear-gradient(180deg, rgba(249, 168, 212, 0.9), rgba(244, 114, 182, 0.95));
+}
+
+.scene-occluder-ice {
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(148, 163, 184, 0.8));
+}
+
+.scene-occluder-snowbank {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(191, 219, 254, 0.9));
+}
+
+.scene-occluder-hill {
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.66), rgba(249, 115, 22, 0.9));
+}
+
+.scene-occluder-cloud {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(219, 234, 254, 0.86));
+}
+
