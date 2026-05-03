@@ -128,6 +128,18 @@ describe("AppController", () => {
     controller.destroy();
   });
 
+  it("cycles character mode through the new type control action", () => {
+    const { bus, controller, hudView, robotModel } = createController();
+
+    expect(robotModel.snapshot.characterMode).toBe("robot");
+    bus.emit(UI_EVENTS.ACTION, { action: "nextCharacterMode" });
+
+    expect(robotModel.snapshot.characterMode).toBe("astronaut");
+    expect(hudView.showToast).toHaveBeenCalledWith("Type: Astronaut");
+
+    controller.destroy();
+  });
+
   it("passes scene hide context into stage hide-seek", () => {
     const { bus, controller, stageView, hideContext } = createController();
 

@@ -1,0 +1,716 @@
+.part-leg {
+  width: 62px;
+  height: 114px;
+  position: relative;
+  z-index: var(--z-robot-legs, 3);
+}
+
+.part-leg[data-side="left"] {
+  transform: translateX(2px);
+}
+
+.part-leg[data-side="right"] {
+  transform: translateX(-2px);
+}
+
+.robot-piece-mode-robot {
+  --mode-glow: rgba(148, 163, 184, 0.22);
+}
+
+.robot-piece-mode-astronaut {
+  --mode-glow: rgba(125, 211, 252, 0.24);
+  border-color: rgba(186, 230, 253, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(7, 89, 133, 0.36), 0 8px 20px rgba(2, 44, 84, 0.45);
+}
+
+.robot-piece-mode-dragon {
+  --mode-glow: rgba(253, 186, 116, 0.2);
+  border-color: rgba(251, 146, 60, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(124, 45, 18, 0.4), 0 8px 20px rgba(127, 29, 29, 0.38);
+}
+
+.robot-piece {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--mode-glow, transparent);
+}
+
+.robot-piece-arm.robot-piece-side-left {
+  transform: rotate(4deg);
+}
+
+.robot-piece-arm.robot-piece-side-right {
+  transform: rotate(-4deg);
+}
+
+.robot-piece-legs {
+  border-radius: var(--legs-radius, 18px);
+  --legs-d1-w: 28px;
+  --legs-d1-h: 72px;
+  --legs-d1-l: 17px;
+  --legs-d1-t: 12px;
+  --legs-d1-r: 12px;
+  --legs-d1-bg: rgba(255, 255, 255, 0.82);
+  --legs-d1-shadow: none;
+  --legs-d2-w: 40px;
+  --legs-d2-h: 16px;
+  --legs-d2-l: 11px;
+  --legs-d2-b: 8px;
+  --legs-d2-r: 999px;
+  --legs-d2-bg: rgba(0, 0, 0, 0.3);
+}
+
+.robot-piece-legs.robot-piece-side-left {
+  transform: rotate(-2deg);
+}
+
+.robot-piece-legs.robot-piece-side-right {
+  transform: rotate(2deg);
+}
+
+.robot-piece-head.robot-piece-variant-0 {
+  --head-radius: 14px;
+}
+
+.robot-piece-head.robot-piece-variant-1 {
+  --head-radius: 40px;
+  --head-d1-w: 44px;
+  --head-d1-l: 34px;
+  --head-d2-w: 30px;
+  --head-d2-l: 42px;
+}
+
+.robot-piece-head.robot-piece-variant-2 {
+  --head-radius: 10px;
+  --head-d1-w: 58px;
+  --head-d1-h: 22px;
+  --head-d1-l: 28px;
+  --head-d1-bg: rgba(199, 242, 255, 0.82);
+}
+
+.robot-piece-head.robot-piece-variant-3 {
+  --head-radius: 20px;
+  --head-d1-w: 10px;
+  --head-d1-h: 20px;
+  --head-d1-l: 52px;
+  --head-d1-t: 4px;
+  --head-d2-w: 14px;
+  --head-d2-h: 14px;
+  --head-d2-l: 50px;
+  --head-d2-b: 64px;
+}
+
+.robot-piece-head.robot-piece-variant-4 {
+  --head-radius: 24px 24px 14px 14px;
+  --head-d1-w: 16px;
+  --head-d1-h: 16px;
+  --head-d1-l: 28px;
+  --head-d1-shadow: 40px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.robot-piece-head.robot-piece-variant-5 {
+  --head-radius: 8px 8px 20px 20px;
+  --head-d1-w: 64px;
+  --head-d1-h: 10px;
+  --head-d1-l: 20px;
+  --head-d1-bg: rgba(255, 215, 117, 0.85);
+}
+
+.robot-piece-head.robot-piece-variant-6 {
+  --head-radius: 26px;
+  --head-d1-w: 56px;
+  --head-d1-h: 24px;
+  --head-d1-l: 28px;
+  --head-d1-bg: rgba(224, 242, 254, 0.82);
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-7 {
+  --head-radius: 20px;
+  --head-d1-w: 24px;
+  --head-d1-h: 24px;
+  --head-d1-l: 45px;
+  --head-d1-bg: rgba(255, 255, 255, 0.9);
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-8 {
+  --head-radius: 34px;
+  --head-d1-w: 54px;
+  --head-d1-h: 20px;
+  --head-d1-l: 30px;
+  --head-d1-r: 999px;
+}
+
+.robot-piece-head.robot-piece-variant-9 {
+  --head-radius: 50% 50% 18% 18%;
+  --head-d1-w: 28px;
+  --head-d1-h: 28px;
+  --head-d1-l: 43px;
+  --head-d1-r: 50%;
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-10 {
+  --head-radius: 30px 30px 20px 20px;
+  --head-d1-w: 18px;
+  --head-d1-h: 18px;
+  --head-d1-l: 27px;
+  --head-d1-shadow: 42px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.robot-piece-head.robot-piece-variant-11 {
+  --head-radius: 999px;
+  --head-d1-w: 54px;
+  --head-d1-h: 54px;
+  --head-d1-l: 30px;
+  --head-d1-t: 18px;
+  --head-d1-r: 999px;
+  --head-d1-bg: radial-gradient(circle, rgba(255, 255, 255, 0.94) 0 16px, rgba(244, 114, 182, 0.48) 16px 24px, transparent 24px);
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-12 {
+  --head-radius: 22px;
+  --head-d1-w: 14px;
+  --head-d1-h: 14px;
+  --head-d1-l: 30px;
+  --head-d1-t: 16px;
+  --head-d1-shadow: 40px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.robot-piece-head.robot-piece-variant-13 {
+  --head-radius: 12px;
+  --head-d1-w: 72px;
+  --head-d1-h: 42px;
+  --head-d1-l: 21px;
+  --head-d1-r: 8px;
+  --head-d1-bg: rgba(186, 230, 253, 0.56);
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-14 {
+  --head-radius: 14px;
+  --head-d1-w: 14px;
+  --head-d1-h: 14px;
+  --head-d1-l: 24px;
+  --head-d1-shadow:
+    38px 0 0 rgba(255, 255, 255, 0.88),
+    19px 24px 0 rgba(255, 255, 255, 0.88);
+}
+
+.robot-piece-head.robot-piece-variant-15 {
+  --head-radius: 34px 34px 20px 20px;
+  --head-d1-w: 20px;
+  --head-d1-h: 52px;
+  --head-d1-l: 47px;
+  --head-d1-bg: rgba(255, 255, 255, 0.44);
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-16 {
+  --head-radius: 12px 48px 12px 48px;
+  --head-d1-w: 20px;
+  --head-d1-h: 20px;
+  --head-d1-l: 46px;
+  --head-d1-shadow: none;
+}
+
+.robot-piece-head.robot-piece-variant-17 {
+  --head-radius: 34px;
+  --head-d1-w: 12px;
+  --head-d1-h: 24px;
+  --head-d1-l: 30px;
+  --head-d1-r: 8px;
+  --head-d1-shadow:
+    30px 0 0 rgba(255, 255, 255, 0.74),
+    60px 0 0 rgba(255, 255, 255, 0.74);
+}
+
+.robot-piece-body.robot-piece-variant-0 {
+  --body-radius: 16px;
+}
+
+.robot-piece-body.robot-piece-variant-1 {
+  --body-radius: 46px;
+  --body-d1-r: 18px;
+  --body-d2-h: 14px;
+  --body-d2-t: 52px;
+}
+
+.robot-piece-body.robot-piece-variant-2 {
+  --body-radius: 14px 14px 30px 30px;
+  --body-d2-w: 36px;
+  --body-d2-l: 48px;
+}
+
+.robot-piece-body.robot-piece-variant-3 {
+  --body-radius: 50%;
+  --body-d2-w: 60px;
+  --body-d2-l: 36px;
+}
+
+.robot-piece-body.robot-piece-variant-4 {
+  --body-radius: 14px;
+  --body-d1-w: 52px;
+  --body-d1-h: 52px;
+  --body-d1-l: 38px;
+  --body-d1-bg: repeating-radial-gradient(circle, rgba(255, 255, 255, 0.9) 0, rgba(255, 255, 255, 0.9) 5px, rgba(17, 24, 39, 0.25) 5px, rgba(17, 24, 39, 0.25) 9px);
+}
+
+.robot-piece-body.robot-piece-variant-5 {
+  --body-radius: 10px;
+  --body-d1-w: 36px;
+  --body-d1-h: 36px;
+  --body-d1-l: 47px;
+  --body-d1-bg: rgba(226, 232, 240, 0.85);
+}
+
+.robot-piece-body.robot-piece-variant-6 {
+  --body-radius: 50% 50% 20% 20%;
+  --body-d1-r: 50%;
+}
+
+.robot-piece-body.robot-piece-variant-7 {
+  --body-radius: 12px;
+  --body-d1-w: 12px;
+  --body-d1-h: 120px;
+  --body-d1-l: 59px;
+  --body-d1-t: 0;
+  --body-d2-w: 132px;
+  --body-d2-h: 12px;
+  --body-d2-l: 0;
+  --body-d2-t: 54px;
+}
+
+.robot-piece-body.robot-piece-variant-8 {
+  --body-radius: 18px;
+  --body-d1-w: 52px;
+  --body-d1-h: 52px;
+  --body-d1-l: 40px;
+  --body-d1-r: 50%;
+  --body-d1-bg: radial-gradient(circle, rgba(224, 242, 254, 0.9) 0 30%, rgba(59, 130, 246, 0.44) 30% 62%, rgba(30, 64, 175, 0.2) 62%);
+}
+
+.robot-piece-body.robot-piece-variant-9 {
+  --body-radius: 30px 30px 14px 14px;
+  --body-d1-w: 36px;
+  --body-d1-h: 36px;
+  --body-d1-l: 48px;
+  --body-d1-r: 50%;
+}
+
+.robot-piece-body.robot-piece-variant-10 {
+  --body-radius: 16px;
+  --body-d1-w: 82px;
+  --body-d1-h: 58px;
+  --body-d1-l: 25px;
+  --body-d1-t: 18px;
+  --body-d1-r: 10px;
+}
+
+.robot-piece-body.robot-piece-variant-11 {
+  --body-radius: 42px 42px 20px 20px;
+  --body-d1-w: 42px;
+  --body-d1-h: 42px;
+  --body-d1-l: 45px;
+  --body-d1-t: 40px;
+}
+
+.robot-piece-body.robot-piece-variant-12 {
+  --body-radius: 18px;
+  --body-d1-w: 22px;
+  --body-d1-h: 84px;
+  --body-d1-l: 16px;
+  --body-d1-r: 12px;
+  --body-d1-bg: rgba(255, 255, 255, 0.42);
+  --body-d1-shadow: 76px 0 0 rgba(255, 255, 255, 0.42);
+}
+
+.robot-piece-body.robot-piece-variant-13 {
+  --body-radius: 40px 40px 18px 18px;
+  --body-d1-w: 28px;
+  --body-d1-h: 28px;
+  --body-d1-l: 52px;
+  --body-d1-bg: rgba(254, 249, 195, 0.9);
+}
+
+.robot-piece-body.robot-piece-variant-14 {
+  --body-radius: 30px 30px 24px 24px;
+  --body-d1-w: 26px;
+  --body-d1-h: 26px;
+  --body-d1-l: 20px;
+}
+
+.robot-piece-body.robot-piece-variant-15 {
+  --body-radius: 22px 22px 14px 14px;
+  --body-d1-w: 64px;
+  --body-d1-h: 10px;
+  --body-d1-l: 34px;
+  --body-d1-bg: rgba(255, 255, 255, 0.88);
+}
+
+.robot-piece-body.robot-piece-variant-16 {
+  --body-radius: 18px;
+  --body-d1-w: 64px;
+  --body-d1-h: 64px;
+  --body-d1-l: 34px;
+  --body-d1-r: 50%;
+}
+
+.robot-piece-body.robot-piece-variant-17 {
+  --body-radius: 999px;
+  --body-d1-w: 16px;
+  --body-d1-h: 16px;
+  --body-d1-l: 30px;
+  --body-d1-t: 48px;
+  --body-d1-r: 50%;
+  --body-d1-shadow:
+    26px 0 0 rgba(255, 255, 255, 0.86),
+    52px 0 0 rgba(255, 255, 255, 0.86);
+}
+
+.robot-piece-arm.robot-piece-variant-0 {
+  --arm-radius: 26px;
+}
+
+.robot-piece-arm.robot-piece-variant-1 {
+  --arm-radius: 18px;
+  --arm-d1-w: 26px;
+  --arm-d1-h: 56px;
+  --arm-d1-l: 20px;
+  --arm-d1-bg: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82) 5px, rgba(15, 23, 42, 0.24) 5px, rgba(15, 23, 42, 0.24) 10px);
+}
+
+.robot-piece-arm.robot-piece-variant-2 {
+  --arm-radius: 999px 999px 18px 18px;
+  --arm-d2-w: 46px;
+  --arm-d2-h: 24px;
+}
+
+.robot-piece-arm.robot-piece-variant-3 {
+  --arm-radius: 40px 16px 40px 16px;
+  --arm-d1-w: 38px;
+  --arm-d1-h: 24px;
+  --arm-d1-l: 15px;
+  --arm-d2-w: 40px;
+  --arm-d2-h: 20px;
+  --arm-d2-b: 26px;
+}
+
+.robot-piece-arm.robot-piece-variant-4 {
+  --arm-radius: 28px;
+  --arm-d2-w: 34px;
+  --arm-d2-h: 34px;
+}
+
+.robot-piece-arm.robot-piece-variant-5 {
+  --arm-radius: 18px;
+  --arm-d1-w: 10px;
+  --arm-d1-h: 74px;
+  --arm-d1-l: 30px;
+  --arm-d2-w: 18px;
+  --arm-d2-h: 18px;
+}
+
+.robot-piece-arm.robot-piece-variant-6 {
+  --arm-radius: 18px;
+  --arm-d2-w: 34px;
+  --arm-d2-h: 34px;
+  --arm-d2-r: 60% 40% 60% 40%;
+}
+
+.robot-piece-arm.robot-piece-variant-7 {
+  --arm-radius: 20px;
+  --arm-d1-w: 16px;
+  --arm-d1-h: 58px;
+  --arm-d1-l: 28px;
+}
+
+.robot-piece-arm.robot-piece-variant-8 {
+  --arm-radius: 20px;
+  --arm-d1-w: 10px;
+  --arm-d1-h: 66px;
+  --arm-d1-l: 31px;
+  --arm-d2-r: 4px;
+}
+
+.robot-piece-arm.robot-piece-variant-9 {
+  --arm-radius: 24px;
+  --arm-d2-w: 44px;
+  --arm-d2-h: 32px;
+  --arm-d2-r: 50% 50% 20% 20%;
+}
+
+.robot-piece-arm.robot-piece-variant-10 {
+  --arm-radius: 20px;
+  --arm-d1-w: 8px;
+  --arm-d1-h: 72px;
+  --arm-d1-l: 32px;
+  --arm-d2-w: 38px;
+  --arm-d2-h: 38px;
+  --arm-d2-r: 50%;
+}
+
+.robot-piece-arm.robot-piece-variant-11 {
+  --arm-radius: 24px;
+  --arm-d1-w: 18px;
+  --arm-d1-h: 68px;
+  --arm-d1-l: 27px;
+  --arm-d1-bg: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88) 6px, rgba(244, 114, 182, 0.44) 6px, rgba(244, 114, 182, 0.44) 12px);
+}
+
+.robot-piece-arm.robot-piece-variant-12 {
+  --arm-radius: 18px;
+  --arm-d1-w: 14px;
+  --arm-d1-h: 70px;
+  --arm-d1-l: 29px;
+  --arm-d2-w: 40px;
+  --arm-d2-h: 30px;
+}
+
+.robot-piece-arm.robot-piece-variant-13 {
+  --arm-radius: 16px;
+  --arm-d1-w: 12px;
+  --arm-d1-h: 78px;
+  --arm-d1-l: 30px;
+  --arm-d1-bg: rgba(224, 242, 254, 0.86);
+  --arm-d2-w: 16px;
+  --arm-d2-h: 16px;
+  --arm-d2-bg: rgba(56, 189, 248, 0.9);
+  --arm-d2-r: 50%;
+}
+
+.robot-piece-arm.robot-piece-variant-14 {
+  --arm-radius: 999px;
+  --arm-d1-w: 28px;
+  --arm-d1-h: 48px;
+  --arm-d1-l: 22px;
+  --arm-d1-r: 999px;
+  --arm-d2-w: 28px;
+  --arm-d2-h: 28px;
+  --arm-d2-r: 50%;
+}
+
+.robot-piece-arm.robot-piece-variant-15 {
+  --arm-radius: 22px;
+  --arm-d1-w: 14px;
+  --arm-d1-h: 64px;
+  --arm-d1-l: 26px;
+  --arm-d2-w: 48px;
+  --arm-d2-h: 24px;
+  --arm-d2-r: 0 55% 55% 0;
+}
+
+.robot-piece-arm.robot-piece-variant-16 {
+  --arm-radius: 30px;
+  --arm-d1-w: 12px;
+  --arm-d1-h: 74px;
+  --arm-d1-l: 30px;
+  --arm-d1-r: 16px;
+  --arm-d1-shadow: 8px 0 0 rgba(255, 255, 255, 0.65);
+}
+
+.robot-piece-arm.robot-piece-variant-17 {
+  --arm-radius: 10px;
+  --arm-d1-w: 18px;
+  --arm-d1-h: 54px;
+  --arm-d1-l: 26px;
+  --arm-d1-r: 4px;
+  --arm-d2-w: 34px;
+  --arm-d2-h: 34px;
+  --arm-d2-r: 4px;
+}
+
+.robot-piece-legs.robot-piece-variant-0 {
+  --legs-radius: 12px;
+}
+
+.robot-piece-legs.robot-piece-variant-1 {
+  --legs-radius: 999px 999px 18px 18px;
+  --legs-d2-h: 20px;
+}
+
+.robot-piece-legs.robot-piece-variant-2 {
+  --legs-radius: 999px;
+  --legs-d1-w: 32px;
+  --legs-d1-h: 32px;
+  --legs-d1-l: 15px;
+  --legs-d1-t: 60px;
+  --legs-d1-r: 50%;
+  --legs-d2-h: 10px;
+  --legs-d2-b: 26px;
+}
+
+.robot-piece-legs.robot-piece-variant-3 {
+  --legs-radius: 24px;
+  --legs-d1-w: 36px;
+  --legs-d1-h: 50px;
+  --legs-d1-l: 13px;
+  --legs-d1-t: 34px;
+  --legs-d1-r: 999px;
+}
+
+.robot-piece-legs.robot-piece-variant-4 {
+  --legs-radius: 24px;
+  --legs-d1-w: 34px;
+  --legs-d1-h: 26px;
+  --legs-d1-l: 14px;
+  --legs-d1-t: 44px;
+  --legs-d1-r: 999px;
+  --legs-d2-h: 20px;
+  --legs-d2-bg: rgba(59, 130, 246, 0.28);
+}
+
+.robot-piece-legs.robot-piece-variant-5 {
+  --legs-radius: 12px;
+  --legs-d1-w: 14px;
+  --legs-d1-h: 72px;
+  --legs-d1-l: 24px;
+  --legs-d1-t: 14px;
+  --legs-d1-bg: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85) 4px, rgba(15, 23, 42, 0.2) 4px, rgba(15, 23, 42, 0.2) 8px);
+}
+
+.robot-piece-legs.robot-piece-variant-6 {
+  --legs-radius: 10px;
+  --legs-d2-h: 24px;
+}
+
+.robot-piece-legs.robot-piece-variant-7 {
+  --legs-radius: 20px;
+  --legs-d1-w: 12px;
+  --legs-d1-h: 76px;
+  --legs-d1-l: 24px;
+  --legs-d1-t: 12px;
+  --legs-d2-w: 34px;
+  --legs-d2-l: 14px;
+  --legs-d2-h: 10px;
+}
+
+.robot-piece-legs.robot-piece-variant-8 {
+  --legs-radius: 12px;
+  --legs-d2-h: 12px;
+  --legs-d2-bg: rgba(56, 189, 248, 0.42);
+}
+
+.robot-piece-legs.robot-piece-variant-9 {
+  --legs-radius: 999px;
+  --legs-d1-w: 32px;
+  --legs-d1-h: 56px;
+  --legs-d1-l: 15px;
+  --legs-d1-t: 22px;
+  --legs-d1-r: 40% 40% 50% 50%;
+  --legs-d2-h: 18px;
+}
+
+.robot-piece-legs.robot-piece-variant-10 {
+  --legs-radius: 18px;
+  --legs-d1-w: 8px;
+  --legs-d1-h: 72px;
+  --legs-d1-l: 26px;
+  --legs-d1-t: 14px;
+  --legs-d1-r: 999px;
+  --legs-d2-h: 10px;
+}
+
+.robot-piece-legs.robot-piece-variant-11 {
+  --legs-radius: 10px;
+  --legs-d1-w: 10px;
+  --legs-d1-h: 90px;
+  --legs-d1-l: 25px;
+  --legs-d1-t: 4px;
+  --legs-d1-r: 6px;
+}
+
+.robot-piece-legs.robot-piece-variant-12 {
+  --legs-radius: 16px;
+  --legs-d1-w: 24px;
+  --legs-d1-h: 62px;
+  --legs-d1-l: 19px;
+  --legs-d1-t: 12px;
+  --legs-d2-w: 50px;
+  --legs-d2-l: 6px;
+  --legs-d2-h: 20px;
+  --legs-d2-r: 40% 40% 20% 20%;
+}
+
+.robot-piece-legs.robot-piece-variant-13 {
+  --legs-radius: 16px;
+  --legs-d1-w: 20px;
+  --legs-d1-h: 70px;
+  --legs-d1-l: 21px;
+  --legs-d1-t: 10px;
+  --legs-d2-w: 52px;
+  --legs-d2-l: 5px;
+  --legs-d2-h: 10px;
+}
+
+.robot-piece-legs.robot-piece-variant-14 {
+  --legs-radius: 999px;
+  --legs-d1-w: 36px;
+  --legs-d1-h: 58px;
+  --legs-d1-l: 13px;
+  --legs-d1-t: 28px;
+  --legs-d1-r: 50%;
+}
+
+.robot-piece-legs.robot-piece-variant-15 {
+  --legs-radius: 24px;
+  --legs-d1-w: 16px;
+  --legs-d1-h: 80px;
+  --legs-d1-l: 22px;
+  --legs-d1-t: 10px;
+  --legs-d1-bg: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82) 6px, rgba(56, 189, 248, 0.28) 6px, rgba(56, 189, 248, 0.28) 12px);
+}
+
+.robot-piece-legs.robot-piece-variant-16 {
+  --legs-radius: 22px;
+  --legs-d1-w: 26px;
+  --legs-d1-h: 66px;
+  --legs-d1-l: 18px;
+  --legs-d1-r: 14px 14px 40% 40%;
+  --legs-d2-h: 18px;
+  --legs-d2-bg: rgba(248, 113, 113, 0.48);
+}
+
+.robot-piece-legs.robot-piece-variant-17 {
+  --legs-radius: 16px;
+  --legs-d1-w: 20px;
+  --legs-d1-h: 56px;
+  --legs-d1-l: 21px;
+  --legs-d1-t: 20px;
+  --legs-d2-w: 24px;
+  --legs-d2-h: 22px;
+  --legs-d2-l: 17px;
+  --legs-d2-r: 50%;
+}
+
+.robot-piece-mode-astronaut.robot-piece-head {
+  --head-d2-bg: rgba(165, 243, 252, 0.75);
+}
+
+.robot-piece-mode-astronaut.robot-piece-body {
+  --body-d2-bg: rgba(125, 211, 252, 0.36);
+}
+
+.robot-piece-mode-astronaut.robot-piece-arm {
+  --arm-d2-bg: rgba(186, 230, 253, 0.82);
+}
+
+.robot-piece-mode-astronaut.robot-piece-legs {
+  --legs-d2-bg: rgba(186, 230, 253, 0.34);
+}
+
+.robot-piece-mode-dragon.robot-piece-head {
+  --head-d2-bg: rgba(254, 215, 170, 0.74);
+}
+
+.robot-piece-mode-dragon.robot-piece-body {
+  --body-d2-bg: rgba(251, 191, 36, 0.34);
+}
+
+.robot-piece-mode-dragon.robot-piece-arm {
+  --arm-d2-bg: rgba(253, 186, 116, 0.74);
+}
+
+.robot-piece-mode-dragon.robot-piece-legs {
+  --legs-d2-bg: rgba(251, 146, 60, 0.34);
+}

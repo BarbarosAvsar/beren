@@ -30,9 +30,11 @@ test("file protocol startup smoke flow", async ({ page }) => {
   await page.goto(indexFileUrl, { waitUntil: "load" });
 
   await expect(page.getByTestId("controls")).toBeVisible();
-  await expect(page.locator(".control-button")).toHaveCount(7);
+  await expect(page.locator(".control-button")).toHaveCount(8);
   await expect(page.getByTestId("part-head")).toBeVisible();
   await expect(page.getByTestId("part-body")).toBeVisible();
+  await expect(page.getByTestId("part-leg-left")).toBeVisible();
+  await expect(page.getByTestId("part-leg-right")).toBeVisible();
 
   const normalLayerOrder = await readLayerOrder(page);
   expect(normalLayerOrder.hideTarget).toBe(false);
@@ -58,6 +60,18 @@ test("file protocol startup smoke flow", async ({ page }) => {
 
   await page.getByTestId("part-head").click();
   await page.getByTestId("control-mix").click();
+  const robotHeadRemembered = await page.getByTestId("part-head").getAttribute("data-key");
+  await page.getByTestId("control-type").click();
+  await expect(page.getByTestId("part-head")).toHaveAttribute("data-mode", "astronaut");
+  await page.getByTestId("part-head").click();
+  const astronautHeadRemembered = await page.getByTestId("part-head").getAttribute("data-key");
+  await page.getByTestId("control-type").click();
+  await page.getByTestId("control-type").click();
+  await expect(page.getByTestId("part-head")).toHaveAttribute("data-mode", "robot");
+  await expect(page.getByTestId("part-head")).toHaveAttribute("data-key", robotHeadRemembered);
+  await page.getByTestId("control-type").click();
+  await expect(page.getByTestId("part-head")).toHaveAttribute("data-key", astronautHeadRemembered);
+  await page.getByTestId("control-type").click();
 
   const beforeMove = await page.locator("#robot-mover").evaluate((el) => el.style.transform);
   await page.getByTestId("control-move").click();

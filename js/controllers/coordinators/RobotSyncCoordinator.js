@@ -1,4 +1,4 @@
-const DEFAULT_VISUAL_KEYS = new Set(["head", "body", "arms", "legs", "palette", "scale"]);
+const DEFAULT_VISUAL_KEYS = new Set(["characterMode", "head", "body", "arms", "legs", "palette", "scale"]);
 
 export class RobotSyncCoordinator {
   #stageView;

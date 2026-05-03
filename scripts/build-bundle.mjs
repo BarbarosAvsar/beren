@@ -11,7 +11,7 @@ await build({
   bundle: true,
   format: "iife",
   platform: "browser",
-  target: ["es2022"],
+  target: ["es2018"],
   logLevel: "info",
   legalComments: "none",
 });

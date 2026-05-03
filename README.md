@@ -10,6 +10,8 @@ A fully client-side robot builder game implemented with plain HTML, CSS, and Jav
 - View lifecycle safety (`init` + `mount/unmount/destroy`) to avoid listener duplication.
 - Toddler-first gameplay defaults (safer themes, gentler pacing/audio, larger touch targets).
 - Large robot part catalog (18 options per head/body/arms/legs + 16 palettes).
+- Character modes: Robot, Astronaut, and Dragon (18 options per head/body/arms/legs per mode).
+- Split leg assembly (left/right leg elements linked to one leg style selector).
 - Immediate movement response and contextual arm choreography.
 - Hide-and-seek with real foreground occlusion, hints, timer, and score.
 - Engine bodies with smoke/fire exhaust effects.

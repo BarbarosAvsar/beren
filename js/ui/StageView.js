@@ -7,7 +7,7 @@ import {
 } from "../core/Config.js";
 import { UI_EVENTS } from "../core/events.js";
 
-const VISUAL_KEYS = new Set(["head", "body", "arms", "legs", "palette", "scale"]);
+const VISUAL_KEYS = new Set(["characterMode", "head", "body", "arms", "legs", "palette", "scale"]);
 
 export class StageView {
   #bus;
@@ -19,7 +19,8 @@ export class StageView {
   #body;
   #armLeft;
   #armRight;
-  #legs;
+  #legLeft;
+  #legRight;
   #partNodes;
   #partClickHandlers = new Map();
   #mounted = false;
@@ -35,6 +36,7 @@ export class StageView {
   #renderedBodyKey = null;
   #renderedArmsKey = null;
   #renderedLegsKey = null;
+  #renderedCharacterMode = null;
   #renderedBodyHasEngine = null;
   #renderedPalette = {
     head: null,
@@ -54,8 +56,9 @@ export class StageView {
     this.#body = elements.body;
     this.#armLeft = elements.armLeft;
     this.#armRight = elements.armRight;
-    this.#legs = elements.legs;
-    this.#partNodes = [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legs];
+    this.#legLeft = elements.legLeft;
+    this.#legRight = elements.legRight;
+    this.#partNodes = [this.#head, this.#body, this.#armLeft, this.#armRight, this.#legLeft, this.#legRight];
 
     if (typeof options.randomIndex === "function") {
       this.#randomIndex = options.randomIndex;
@@ -119,23 +122,28 @@ export class StageView {
       return;
     }
 
-    const shouldRebuildHead = firstRender || changedSet.has("head");
-    const shouldRebuildBody = firstRender || changedSet.has("body") || this.#renderedBodyHasEngine !== state.bodyHasEngine;
-    const shouldRebuildArms = firstRender || changedSet.has("arms");
-    const shouldRebuildLegs = firstRender || changedSet.has("legs");
+    const modeChanged = this.#renderedCharacterMode !== state.characterMode;
+    const shouldRebuildHead = firstRender || modeChanged || changedSet.has("head");
+    const shouldRebuildBody = firstRender || modeChanged || changedSet.has("body") || this.#renderedBodyHasEngine !== state.bodyHasEngine;
+    const shouldRebuildArms = firstRender || modeChanged || changedSet.has("arms");
+    const shouldRebuildLegs = firstRender || modeChanged || changedSet.has("legs");
 
     if (shouldRebuildHead && this.#shouldRenderPiece(this.#renderedHeadKey, state.head.key, firstRender, changedSet, "head")) {
       this.#renderPiece(this.#head, {
+        mode: state.characterMode,
         kind: "head",
         key: state.head.key,
+        variant: state.head.variant,
         color: state.palette.head,
       });
     }
 
     if (shouldRebuildBody && this.#shouldRenderBody(state, firstRender, changedSet)) {
       this.#renderPiece(this.#body, {
+        mode: state.characterMode,
         kind: "body",
         key: state.body.key,
+        variant: state.body.variant,
         color: state.palette.body,
         isEngine: state.bodyHasEngine,
       });
@@ -143,22 +151,39 @@ export class StageView {
 
     if (shouldRebuildArms && this.#shouldRenderPiece(this.#renderedArmsKey, state.arms.key, firstRender, changedSet, "arms")) {
       this.#renderPiece(this.#armLeft, {
+        mode: state.characterMode,
         kind: "arm",
         key: state.arms.key,
+        variant: state.arms.variant,
         color: state.palette.arms,
+        side: "left",
       });
       this.#renderPiece(this.#armRight, {
+        mode: state.characterMode,
         kind: "arm",
         key: state.arms.key,
+        variant: state.arms.variant,
         color: state.palette.arms,
+        side: "right",
       });
     }
 
     if (shouldRebuildLegs && this.#shouldRenderPiece(this.#renderedLegsKey, state.legs.key, firstRender, changedSet, "legs")) {
-      this.#renderPiece(this.#legs, {
+      this.#renderPiece(this.#legLeft, {
+        mode: state.characterMode,
         kind: "legs",
         key: state.legs.key,
+        variant: state.legs.variant,
         color: state.palette.legs,
+        side: "left",
+      });
+      this.#renderPiece(this.#legRight, {
+        mode: state.characterMode,
+        kind: "legs",
+        key: state.legs.key,
+        variant: state.legs.variant,
+        color: state.palette.legs,
+        side: "right",
       });
     }
 
@@ -296,16 +321,20 @@ export class StageView {
   #applyPaletteChanges(state, rebuilt) {
     if (!rebuilt.head && this.#renderedPalette.head !== state.palette.head && !this.#setPieceColor(this.#head, state.palette.head)) {
       this.#renderPiece(this.#head, {
+        mode: state.characterMode,
         kind: "head",
         key: state.head.key,
+        variant: state.head.variant,
         color: state.palette.head,
       });
     }
 
     if (!rebuilt.body && this.#renderedPalette.body !== state.palette.body && !this.#setPieceColor(this.#body, state.palette.body)) {
       this.#renderPiece(this.#body, {
+        mode: state.characterMode,
         kind: "body",
         key: state.body.key,
+        variant: state.body.variant,
         color: state.palette.body,
         isEngine: state.bodyHasEngine,
       });
@@ -316,24 +345,45 @@ export class StageView {
       const updatedRight = this.#setPieceColor(this.#armRight, state.palette.arms);
       if (!updatedLeft || !updatedRight) {
         this.#renderPiece(this.#armLeft, {
+          mode: state.characterMode,
           kind: "arm",
           key: state.arms.key,
+          variant: state.arms.variant,
           color: state.palette.arms,
+          side: "left",
         });
         this.#renderPiece(this.#armRight, {
+          mode: state.characterMode,
           kind: "arm",
           key: state.arms.key,
+          variant: state.arms.variant,
           color: state.palette.arms,
+          side: "right",
         });
       }
     }
 
-    if (!rebuilt.legs && this.#renderedPalette.legs !== state.palette.legs && !this.#setPieceColor(this.#legs, state.palette.legs)) {
-      this.#renderPiece(this.#legs, {
-        kind: "legs",
-        key: state.legs.key,
-        color: state.palette.legs,
-      });
+    if (!rebuilt.legs && this.#renderedPalette.legs !== state.palette.legs) {
+      const updatedLeft = this.#setPieceColor(this.#legLeft, state.palette.legs);
+      const updatedRight = this.#setPieceColor(this.#legRight, state.palette.legs);
+      if (!updatedLeft || !updatedRight) {
+        this.#renderPiece(this.#legLeft, {
+          mode: state.characterMode,
+          kind: "legs",
+          key: state.legs.key,
+          variant: state.legs.variant,
+          color: state.palette.legs,
+          side: "left",
+        });
+        this.#renderPiece(this.#legRight, {
+          mode: state.characterMode,
+          kind: "legs",
+          key: state.legs.key,
+          variant: state.legs.variant,
+          color: state.palette.legs,
+          side: "right",
+        });
+      }
     }
   }
 
@@ -346,7 +396,7 @@ export class StageView {
       return true;
     }
 
-    return changedSet.has(keyName);
+    return changedSet.has(keyName) || changedSet.has("characterMode");
   }
 
   #shouldRenderBody(state, firstRender, changedSet) {
@@ -362,29 +412,53 @@ export class StageView {
       return true;
     }
 
-    return changedSet.has("body");
+    return changedSet.has("body") || changedSet.has("characterMode");
   }
 
   #renderPiece(targetButton, options) {
-    const { kind, key, color, isEngine = false } = options;
+    const {
+      mode,
+      kind,
+      key,
+      variant = 0,
+      color,
+      side = null,
+      isEngine = false,
+    } = options;
     const existingExhaust = kind === "body" ? targetButton.querySelector("#exhaust-container") : null;
 
     targetButton.innerHTML = "";
     targetButton.dataset.key = key;
+    targetButton.dataset.mode = mode;
+    targetButton.dataset.variant = String(variant);
+    if (side) {
+      targetButton.dataset.side = side;
+    } else {
+      delete targetButton.dataset.side;
+    }
 
     if (kind === "body") {
       targetButton.dataset.engine = isEngine ? "true" : "false";
     }
 
     const piece = document.createElement("div");
-    piece.className = `robot-piece robot-piece-${kind} robot-${kind}-${key}`;
+    piece.className = [
+      "robot-piece",
+      `robot-piece-${kind}`,
+      `robot-piece-mode-${mode}`,
+      `robot-piece-variant-${variant}`,
+      `robot-piece-key-${key}`,
+      side ? `robot-piece-side-${side}` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
     piece.style.setProperty("--piece-color", color);
 
     if (kind === "body" && isEngine) {
       piece.classList.add("robot-body-engine");
     }
 
-    this.#appendDetail(piece, kind, key);
+    this.#appendDetail(piece, kind, variant);
 
     targetButton.appendChild(piece);
     if (existingExhaust) {
@@ -392,13 +466,13 @@ export class StageView {
     }
   }
 
-  #appendDetail(piece, kind, key) {
+  #appendDetail(piece, kind, variant) {
     const detail = document.createElement("span");
-    detail.className = `piece-detail piece-detail-${kind} piece-detail-${kind}-${key}`;
+    detail.className = `piece-detail piece-detail-${kind} piece-detail-${kind}-variant-${variant}`;
     piece.appendChild(detail);
 
     const detailSecondary = document.createElement("span");
-    detailSecondary.className = `piece-detail-secondary piece-detail-secondary-${kind} piece-detail-secondary-${kind}-${key}`;
+    detailSecondary.className = `piece-detail-secondary piece-detail-secondary-${kind} piece-detail-secondary-${kind}-variant-${variant}`;
     piece.appendChild(detailSecondary);
   }
 
@@ -414,6 +488,7 @@ export class StageView {
 
   #cacheRenderedState(state) {
     this.#hasRendered = true;
+    this.#renderedCharacterMode = state.characterMode;
     this.#renderedHeadKey = state.head.key;
     this.#renderedBodyKey = state.body.key;
     this.#renderedArmsKey = state.arms.key;

@@ -13,4 +13,4 @@ export {
   THEMES,
 } from "./defaults.js";
 export { PALETTES } from "./palettes.js";
-export { PART_CATALOG } from "./robot-parts.js";
+export { CHARACTER_MODES, PART_CATALOG, PART_CATALOGS_BY_MODE } from "./robot-parts.js";

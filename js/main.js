@@ -47,7 +47,8 @@ async function bootstrap() {
     body: queryRequired("part-body"),
     armLeft: queryRequired("part-arm-left"),
     armRight: queryRequired("part-arm-right"),
-    legs: queryRequired("part-legs"),
+    legLeft: queryRequired("part-leg-left"),
+    legRight: queryRequired("part-leg-right"),
   });
 
   const sceneService = new SceneService(queryRequired("scene-background"), queryRequired("scene-foreground"));

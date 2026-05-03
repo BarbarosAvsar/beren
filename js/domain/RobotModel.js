@@ -1,13 +1,36 @@
-import { EMOTIONS, PALETTES, PART_CATALOG, SCALE_PRESETS } from "../core/Config.js";
+import { CHARACTER_MODES, EMOTIONS, PALETTES, PART_CATALOGS_BY_MODE, SCALE_PRESETS } from "../core/Config.js";
 import { ROBOT_EVENTS } from "../core/events.js";
+
+const PART_KEYS = Object.freeze(["head", "body", "arms", "legs"]);
+const PART_COLLECTION_BY_KEY = Object.freeze({
+  head: "heads",
+  body: "bodies",
+  arms: "arms",
+  legs: "legs",
+});
+
+function createPartIndexes() {
+  return {
+    head: 0,
+    body: 0,
+    arms: 0,
+    legs: 0,
+  };
+}
+
+function createModeIndexes() {
+  const indexes = {};
+  CHARACTER_MODES.forEach((mode) => {
+    indexes[mode] = createPartIndexes();
+  });
+  return indexes;
+}
 
 export class RobotModel {
   #bus;
   #nameService;
-  #headIndex = 0;
-  #bodyIndex = 0;
-  #armsIndex = 0;
-  #legsIndex = 0;
+  #modeIndex = 0;
+  #modePartIndexes = createModeIndexes();
   #emotionIndex = 0;
   #paletteIndex = 0;
   #scaleIndex = 2;
@@ -20,11 +43,16 @@ export class RobotModel {
   }
 
   get snapshot() {
+    const characterMode = this.#activeMode;
+    const catalog = this.#activeCatalog;
+    const indexes = this.#activeModePartIndexes;
+
     return {
-      headIndex: this.#headIndex,
-      bodyIndex: this.#bodyIndex,
-      armsIndex: this.#armsIndex,
-      legsIndex: this.#legsIndex,
+      characterMode,
+      headIndex: indexes.head,
+      bodyIndex: indexes.body,
+      armsIndex: indexes.arms,
+      legsIndex: indexes.legs,
       emotionIndex: this.#emotionIndex,
       paletteIndex: this.#paletteIndex,
       scale: SCALE_PRESETS[this.#scaleIndex],
@@ -32,34 +60,22 @@ export class RobotModel {
       emotion: EMOTIONS[this.#emotionIndex],
       palette: PALETTES[this.#paletteIndex],
       bodyHasEngine: this.isEngineBody(),
-      body: PART_CATALOG.bodies[this.#bodyIndex],
-      head: PART_CATALOG.heads[this.#headIndex],
-      arms: PART_CATALOG.arms[this.#armsIndex],
-      legs: PART_CATALOG.legs[this.#legsIndex],
+      body: catalog.bodies[indexes.body],
+      head: catalog.heads[indexes.head],
+      arms: catalog.arms[indexes.arms],
+      legs: catalog.legs[indexes.legs],
     };
   }
 
   cyclePart(part) {
-    switch (part) {
-      case "head":
-        this.#headIndex = (this.#headIndex + 1) % PART_CATALOG.heads.length;
-        this.#emit(["head"]);
-        break;
-      case "body":
-        this.#bodyIndex = (this.#bodyIndex + 1) % PART_CATALOG.bodies.length;
-        this.#emit(["body"]);
-        break;
-      case "arms":
-        this.#armsIndex = (this.#armsIndex + 1) % PART_CATALOG.arms.length;
-        this.#emit(["arms"]);
-        break;
-      case "legs":
-        this.#legsIndex = (this.#legsIndex + 1) % PART_CATALOG.legs.length;
-        this.#emit(["legs"]);
-        break;
-      default:
-        break;
+    if (!PART_KEYS.includes(part)) {
+      return;
     }
+
+    const partIndexes = this.#activeModePartIndexes;
+    const catalog = this.#activeCatalog;
+    partIndexes[part] = (partIndexes[part] + 1) % catalog[PART_COLLECTION_BY_KEY[part]].length;
+    this.#emit([part]);
   }
 
   cycleEmotion() {
@@ -73,15 +89,23 @@ export class RobotModel {
   }
 
   randomize() {
-    this.#headIndex = Math.floor(Math.random() * PART_CATALOG.heads.length);
-    this.#bodyIndex = Math.floor(Math.random() * PART_CATALOG.bodies.length);
-    this.#armsIndex = Math.floor(Math.random() * PART_CATALOG.arms.length);
-    this.#legsIndex = Math.floor(Math.random() * PART_CATALOG.legs.length);
+    const partIndexes = this.#activeModePartIndexes;
+    const catalog = this.#activeCatalog;
+
+    partIndexes.head = Math.floor(Math.random() * catalog.heads.length);
+    partIndexes.body = Math.floor(Math.random() * catalog.bodies.length);
+    partIndexes.arms = Math.floor(Math.random() * catalog.arms.length);
+    partIndexes.legs = Math.floor(Math.random() * catalog.legs.length);
     this.#emotionIndex = Math.floor(Math.random() * EMOTIONS.length);
     this.#paletteIndex = Math.floor(Math.random() * PALETTES.length);
     this.#scaleIndex = Math.floor(Math.random() * SCALE_PRESETS.length);
     this.#name = this.#nameService.next();
     this.#emit(["head", "body", "arms", "legs", "emotion", "palette", "scale", "name"]);
+  }
+
+  nextCharacterMode() {
+    this.#modeIndex = (this.#modeIndex + 1) % CHARACTER_MODES.length;
+    this.#emit(["characterMode", "head", "body", "arms", "legs"]);
   }
 
   nextPalette() {
@@ -95,7 +119,8 @@ export class RobotModel {
   }
 
   isEngineBody() {
-    return Boolean(PART_CATALOG.bodies[this.#bodyIndex].engine);
+    const catalog = this.#activeCatalog;
+    return Boolean(catalog.bodies[this.#activeModePartIndexes.body].engine);
   }
 
   #emit(changed) {
@@ -103,5 +128,17 @@ export class RobotModel {
       changed,
       state: this.snapshot,
     });
+  }
+
+  get #activeMode() {
+    return CHARACTER_MODES[this.#modeIndex];
+  }
+
+  get #activeCatalog() {
+    return PART_CATALOGS_BY_MODE[this.#activeMode];
+  }
+
+  get #activeModePartIndexes() {
+    return this.#modePartIndexes[this.#activeMode];
   }
 }

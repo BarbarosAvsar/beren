@@ -7,6 +7,7 @@ import { StageView } from "../../js/ui/StageView.js";
 
 function createRobotState(overrides = {}) {
   const base = {
+    characterMode: "robot",
     head: { key: "cube" },
     body: { key: "chest" },
     arms: { key: "claw" },
@@ -43,24 +44,27 @@ function createFixture() {
   const body = document.createElement("button");
   const armLeft = document.createElement("button");
   const armRight = document.createElement("button");
-  const legs = document.createElement("button");
+  const legLeft = document.createElement("button");
+  const legRight = document.createElement("button");
 
   head.dataset.part = "head";
   body.dataset.part = "body";
   armLeft.dataset.part = "arms";
   armRight.dataset.part = "arms";
-  legs.dataset.part = "legs";
+  legLeft.dataset.part = "legs";
+  legRight.dataset.part = "legs";
 
   head.id = "part-head";
   body.id = "part-body";
   armLeft.id = "part-arm-left";
   armRight.id = "part-arm-right";
-  legs.id = "part-legs";
+  legLeft.id = "part-leg-left";
+  legRight.id = "part-leg-right";
 
   region.appendChild(mover);
   mover.appendChild(dancer);
   dancer.appendChild(assembly);
-  assembly.append(head, armLeft, body, armRight, legs);
+  assembly.append(head, armLeft, body, armRight, legLeft, legRight);
   document.body.appendChild(region);
 
   Object.defineProperty(region, "clientWidth", { value: 960, configurable: true });
@@ -75,7 +79,8 @@ function createFixture() {
     body,
     armLeft,
     armRight,
-    legs,
+    legLeft,
+    legRight,
   };
 }
 
@@ -208,7 +213,8 @@ describe("StageView", () => {
       body: fixture.body.querySelector(".robot-piece"),
       armLeft: fixture.armLeft.querySelector(".robot-piece"),
       armRight: fixture.armRight.querySelector(".robot-piece"),
-      legs: fixture.legs.querySelector(".robot-piece"),
+      legLeft: fixture.legLeft.querySelector(".robot-piece"),
+      legRight: fixture.legRight.querySelector(".robot-piece"),
     };
 
     stage.applyRobotChanges(createRobotState({ name: "New Name" }), ["name"]);
@@ -217,7 +223,8 @@ describe("StageView", () => {
     expect(fixture.body.querySelector(".robot-piece")).toBe(refsBefore.body);
     expect(fixture.armLeft.querySelector(".robot-piece")).toBe(refsBefore.armLeft);
     expect(fixture.armRight.querySelector(".robot-piece")).toBe(refsBefore.armRight);
-    expect(fixture.legs.querySelector(".robot-piece")).toBe(refsBefore.legs);
+    expect(fixture.legLeft.querySelector(".robot-piece")).toBe(refsBefore.legLeft);
+    expect(fixture.legRight.querySelector(".robot-piece")).toBe(refsBefore.legRight);
   });
 
   it("recreates only changed part node for head updates", () => {
@@ -231,7 +238,8 @@ describe("StageView", () => {
       body: fixture.body.querySelector(".robot-piece"),
       armLeft: fixture.armLeft.querySelector(".robot-piece"),
       armRight: fixture.armRight.querySelector(".robot-piece"),
-      legs: fixture.legs.querySelector(".robot-piece"),
+      legLeft: fixture.legLeft.querySelector(".robot-piece"),
+      legRight: fixture.legRight.querySelector(".robot-piece"),
     };
 
     stage.applyRobotChanges(createRobotState({ head: { key: "bubble" } }), ["head"]);
@@ -240,7 +248,8 @@ describe("StageView", () => {
     expect(fixture.body.querySelector(".robot-piece")).toBe(refsBefore.body);
     expect(fixture.armLeft.querySelector(".robot-piece")).toBe(refsBefore.armLeft);
     expect(fixture.armRight.querySelector(".robot-piece")).toBe(refsBefore.armRight);
-    expect(fixture.legs.querySelector(".robot-piece")).toBe(refsBefore.legs);
+    expect(fixture.legLeft.querySelector(".robot-piece")).toBe(refsBefore.legLeft);
+    expect(fixture.legRight.querySelector(".robot-piece")).toBe(refsBefore.legRight);
   });
 
   it("updates palette colors without recreating part nodes", () => {
@@ -254,7 +263,8 @@ describe("StageView", () => {
       body: fixture.body.querySelector(".robot-piece"),
       armLeft: fixture.armLeft.querySelector(".robot-piece"),
       armRight: fixture.armRight.querySelector(".robot-piece"),
-      legs: fixture.legs.querySelector(".robot-piece"),
+      legLeft: fixture.legLeft.querySelector(".robot-piece"),
+      legRight: fixture.legRight.querySelector(".robot-piece"),
     };
 
     stage.applyRobotChanges(
@@ -274,19 +284,49 @@ describe("StageView", () => {
       body: fixture.body.querySelector(".robot-piece"),
       armLeft: fixture.armLeft.querySelector(".robot-piece"),
       armRight: fixture.armRight.querySelector(".robot-piece"),
-      legs: fixture.legs.querySelector(".robot-piece"),
+      legLeft: fixture.legLeft.querySelector(".robot-piece"),
+      legRight: fixture.legRight.querySelector(".robot-piece"),
     };
 
     expect(refsAfter.head).toBe(refsBefore.head);
     expect(refsAfter.body).toBe(refsBefore.body);
     expect(refsAfter.armLeft).toBe(refsBefore.armLeft);
     expect(refsAfter.armRight).toBe(refsBefore.armRight);
-    expect(refsAfter.legs).toBe(refsBefore.legs);
+    expect(refsAfter.legLeft).toBe(refsBefore.legLeft);
+    expect(refsAfter.legRight).toBe(refsBefore.legRight);
     expect(refsAfter.head.style.getPropertyValue("--piece-color")).toBe("#0ea5e9");
     expect(refsAfter.body.style.getPropertyValue("--piece-color")).toBe("#f43f5e");
     expect(refsAfter.armLeft.style.getPropertyValue("--piece-color")).toBe("#84cc16");
     expect(refsAfter.armRight.style.getPropertyValue("--piece-color")).toBe("#84cc16");
-    expect(refsAfter.legs.style.getPropertyValue("--piece-color")).toBe("#7c3aed");
+    expect(refsAfter.legLeft.style.getPropertyValue("--piece-color")).toBe("#7c3aed");
+    expect(refsAfter.legRight.style.getPropertyValue("--piece-color")).toBe("#7c3aed");
+  });
+
+  it("rebuilds visual pieces when character mode changes", () => {
+    const bus = new EventBus({ allowedTypes: ALL_EVENT_TYPES });
+    const fixture = createFixture();
+    const stage = new StageView(bus, fixture);
+
+    stage.render(createRobotState());
+    const headBefore = fixture.head.querySelector(".robot-piece");
+    const legLeftBefore = fixture.legLeft.querySelector(".robot-piece");
+
+    stage.applyRobotChanges(
+      createRobotState({
+        characterMode: "astronaut",
+        head: { key: "eva", variant: 0 },
+        body: { key: "suit", variant: 0 },
+        arms: { key: "gauntlet", variant: 0 },
+        legs: { key: "moonboot", variant: 0 },
+      }),
+      ["characterMode", "head", "body", "arms", "legs"],
+    );
+
+    expect(fixture.head.querySelector(".robot-piece")).not.toBe(headBefore);
+    expect(fixture.legLeft.querySelector(".robot-piece")).not.toBe(legLeftBefore);
+    expect(fixture.head.dataset.mode).toBe("astronaut");
+    expect(fixture.legLeft.dataset.mode).toBe("astronaut");
+    expect(fixture.legRight.dataset.mode).toBe("astronaut");
   });
 
   it("mounts and unmounts part listeners without duplication", () => {

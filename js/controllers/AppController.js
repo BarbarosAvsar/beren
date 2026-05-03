@@ -174,6 +174,16 @@ export class AppController {
 
   #handleAction(action) {
     switch (action) {
+      case "nextCharacterMode":
+        this.#audioService.playSuccess();
+        this.#robotModel.nextCharacterMode();
+        {
+          const mode = (this.#latestRobotState ?? this.#robotModel.snapshot).characterMode;
+          const modeLabel = mode.charAt(0).toUpperCase() + mode.slice(1);
+          this.#hudView.showToast(`Type: ${modeLabel}`);
+          this.#audioService.speak(modeLabel);
+        }
+        break;
       case "nextTheme":
         this.#audioService.playSuccess();
         this.#gameModel.nextTheme();

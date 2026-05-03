@@ -1,4 +1,5 @@
 export const CONTROL_DEFINITIONS = [
+  { id: "type", action: "nextCharacterMode", label: "Type", icon: "icon-type", variant: "type" },
   { id: "scene", action: "nextTheme", label: "Scene", icon: "icon-scene", variant: "scene" },
   { id: "color", action: "nextPalette", label: "Color", icon: "icon-color", variant: "color" },
   { id: "size", action: "nextSize", label: "Size", icon: "icon-size", variant: "size" },
